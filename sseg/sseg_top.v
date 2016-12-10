@@ -11,16 +11,16 @@ module sseg_top
 
    // instantiate four instances of the hex to 7-segment decoder
    hex_to_sseg sseg_dig_0
-     (.hex(sw[3:0]), .dp(1'b0), .sseg(led0));
+     (.hex(hex_digits[3:0]), .dp(1'b0), .sseg(led0));
 
    hex_to_sseg sseg_dig_1
-     (.hex(sw[7:4]), .dp(1'b0), .sseg(led1));
+     (.hex(hex_digits[7:4]), .dp(1'b0), .sseg(led1));
 
    hex_to_sseg sseg_dig_2
-     (.hex(sw[11:8]), .dp(1'b0), .sseg(led2));
+     (.hex(hex_digits[11:8]), .dp(1'b0), .sseg(led2));
 
    hex_to_sseg sseg_dig_3
-     (.hex(sw[15:12]), .dp(1'b0), .sseg(led3));
+     (.hex(hex_digits[15:12]), .dp(1'b0), .sseg(led3));
 
    // instantiate 7-segment decoder
    disp_mux disp_unit
