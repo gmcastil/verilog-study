@@ -18,22 +18,22 @@ set_property PACKAGE_PIN W4 [get_ports {an[3]}]
     set_property IOSTANDARD LVCMOS33 [get_ports {an[3]}]
 
 # SSEG display LEDs
-set_property PACKAGE_PIN V7 [get_ports {sseg[0]}]
-    set_property IOSTANDARD LVCMOS33 [get_ports {sseg[0]}]
-set_property PACKAGE_PIN U7 [get_ports {sseg[1]}]
-    set_property IOSTANDARD LVCMOS33 [get_ports {sseg[1]}]
-set_property PACKAGE_PIN V5 [get_ports {sseg[2]}]
-    set_property IOSTANDARD LVCMOS33 [get_ports {sseg[2]}]
-set_property PACKAGE_PIN U5 [get_ports {sseg[3]}]
-    set_property IOSTANDARD LVCMOS33 [get_ports {sseg[3]}]
-set_property PACKAGE_PIN V8 [get_ports {sseg[4]}]
-    set_property IOSTANDARD LVCMOS33 [get_ports {sseg[4]}]
-set_property PACKAGE_PIN U8 [get_ports {sseg[5]}]
-    set_property IOSTANDARD LVCMOS33 [get_ports {sseg[5]}]
-set_property PACKAGE_PIN W6 [get_ports {sseg[6]}]
-    set_property IOSTANDARD LVCMOS33 [get_ports {sseg[6]}]
-set_property PACKAGE_PIN W7 [get_ports {sseg[7]}]
-    set_property IOSTANDARD LVCMOS33 [get_ports {sseg[7]}]
+set_property PACKAGE_PIN U7 [get_ports {digit[0]}]             # CG 
+    set_property IOSTANDARD LVCMOS33 [get_ports {digit[0]}]
+set_property PACKAGE_PIN V5 [get_ports {digit[1]}]             # 
+    set_property IOSTANDARD LVCMOS33 [get_ports {digit[1]}]
+set_property PACKAGE_PIN U5 [get_ports {digit[2]}]             #
+    set_property IOSTANDARD LVCMOS33 [get_ports {digit[2]}]
+set_property PACKAGE_PIN V8 [get_ports {digit[3]}]             #
+    set_property IOSTANDARD LVCMOS33 [get_ports {digit[3]}]
+set_property PACKAGE_PIN U8 [get_ports {digit[4]}]             #
+    set_property IOSTANDARD LVCMOS33 [get_ports {digit[4]}]
+set_property PACKAGE_PIN W6 [get_ports {digit[5]}]             #
+    set_property IOSTANDARD LVCMOS33 [get_ports {digit[5]}]
+set_property PACKAGE_PIN W7 [get_ports {digit[6]}]             # 
+    set_property IOSTANDARD LVCMOS33 [get_ports {digit[6]}]
+set_property PACKAGE_PIN V7 [get_ports {digit[7]}]             # DP 
+    set_property IOSTANDARD LVCMOS33 [get_ports {digit[7]}]
 
 ## switches
 set_property PACKAGE_PIN V17 [get_ports {hex_digits[0]}]					
@@ -68,3 +68,4 @@ set_property PACKAGE_PIN T1 [get_ports {hex_digits[14]}]
 	set_property IOSTANDARD LVCMOS33 [get_ports {hex_digits[14]}]
 set_property PACKAGE_PIN R2 [get_ports {hex_digits[15]}]					
 	set_property IOSTANDARD LVCMOS33 [get_ports {hex_digits[15]}]
+
