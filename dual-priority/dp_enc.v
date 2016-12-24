@@ -4,12 +4,11 @@ module dp_enc
    output reg [3:0] first, second
    );
    
+   // to store the result after removing the highest priority signal
    reg [11:0] 	     interim;
    
    always @*
      begin
-     // to store the result after removing the highest priority signal
-
 	 // find the highest priority signal and then 
 	 casez (req)
 	  12'b1???????????:
