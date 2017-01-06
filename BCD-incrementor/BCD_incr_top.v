@@ -9,10 +9,10 @@ module BCD_incr_top
 
    wire [15:0]        data;
    
-   incr_value BCD_incrementor
+   BCD_incrementor incr_value 
      (.incr(incr), .reset(reset), .data(data));
 
-   display sseg_top
+   sseg_top display
      (.clk(clk), .hex_digits(data), .an(an), .digit(digit));
 
 endmodule // BCD_incr_top
