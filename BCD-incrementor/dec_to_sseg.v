@@ -1,13 +1,13 @@
-module hex_to_sseg
+module dec_to_sseg
   (
-   input wire [3:0] hex,
+   input wire [3:0] dec,
    input wire dp,
    output reg [7:0] sseg  // output active low
    );
 
    always @*
      begin
-	case(hex)
+	case(dec)
 	  4'h0: sseg[6:0] = 7'b0000001;
 	  4'h1: sseg[6:0] = 7'b1001111;
 	  4'h2: sseg[6:0] = 7'b0010010;
@@ -17,15 +17,9 @@ module hex_to_sseg
 	  4'h6: sseg[6:0] = 7'b0100000;
 	  4'h7: sseg[6:0] = 7'b0001111;
 	  4'h8: sseg[6:0] = 7'b0000000;
-	  4'h9: sseg[6:0] = 7'b0000100;
-	  4'ha: sseg[6:0] = 7'b0001000;
-	  4'hb: sseg[6:0] = 7'b1100000;
-	  4'hc: sseg[6:0] = 7'b0110001;
-	  4'hd: sseg[6:0] = 7'b1000010;
-	  4'he: sseg[6:0] = 7'b0110000;
-	  default: sseg[6:0] = 7'b0111000;  // 4'hf
-	endcase // case (hex)
+	  default: sseg[6:0] = 7'b0000100;
+	endcase // case (dec)
 	sseg[7] = dp;
     end // always @ *
 
-endmodule // hex_to_sseg
+endmodule // dec_to_sseg

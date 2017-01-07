@@ -13,6 +13,6 @@ module BCD_incr_top
      (.incr(incr), .reset(reset), .data(data));
 
    sseg_top display
-     (.clk(clk), .hex_digits(data), .an(an), .digit(digit));
+     (.clk(clk), .dec_digits(data), .an(an), .digit(digit));
 
 endmodule // BCD_incr_top
