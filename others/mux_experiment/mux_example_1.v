@@ -1,13 +1,6 @@
 module mux_example_1
   (
-   input wire       in_0,
-   input wire       in_1,
-   input wire       in_2,
-   input wire       in_3,
-   input wire       in_4,
-   input wire       in_5,
-   input wire       in_6,
-   input wire       in_7,
+   input wire [7:0] in,
    input wire [2:0] select,
    output wire      out
    );
@@ -21,13 +14,13 @@ module mux_example_1
     multiplexers which is interesting.
     */
 
-   assign out = (select == 3'b000) ? in_0 :
-                (select == 3'b001) ? in_1 :
-                (select == 3'b010) ? in_2 :
-                (select == 3'b011) ? in_3 :
-                (select == 3'b100) ? in_4 :
-                (select == 3'b101) ? in_5 :
-                (select == 3'b110) ? in_6 : in_7;
+   assign out = (select == 3'b000) ? in[0] :
+                (select == 3'b001) ? in[1] :
+                (select == 3'b010) ? in[2] :
+                (select == 3'b011) ? in[3] :
+                (select == 3'b100) ? in[4] :
+                (select == 3'b101) ? in[5] :
+                (select == 3'b110) ? in[6] : in[7];
 
 endmodule // mux_example_1
 
