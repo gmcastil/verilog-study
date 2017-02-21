@@ -3,13 +3,13 @@
 module heartbeat_tb ();
 
    reg clk;
-   reg resetn;
-   reg [7:0] dig_0;
-   reg [7:0] dig_1;
-   reg [7:0] dig_2;
-   reg [7:0] dig_3;
+   reg reset;
+   wire [7:0] dig_0;
+   wire [7:0] dig_1;
+   wire [7:0] dig_2;
+   wire [7:0] dig_3;
 
-   localparam T = 10;           // 10ns clock period
+   localparam T=10;           // 10ns clock period
 
    initial begin
       clk <= 1'b1;
@@ -18,13 +18,21 @@ module heartbeat_tb ();
       end
    end
 
+   initial begin
+      reset <= 1'b0;
+      #(2*T)
+      reset <= 1'b1;
+      #(2*T)
+      reset <= 1'b0;
+   end
+
    heartbeat
       #(
-        .PULSE_COUNT_MAX (1.389E6),
-        .HEARTBEAT_COUNT_MAX (2**18)
+        .PULSE_COUNT_MAX (32),
+        .DURATION_MAX (2)
         ) code_under_test(
                           .clk (clk),
-                          .resetn (resetn),
+                          .reset (reset),
                           .dig_0 (dig_0),
                           .dig_1 (dig_1),
                           .dig_2 (dig_2),
