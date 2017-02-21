@@ -17,7 +17,7 @@ module disp_mux
 
    // N-bit counter
    // register
-   always @(posedge clk, posedge reset)
+   always @(posedge clk)
      if (reset)
        q_reg <= 0;
      else
@@ -54,6 +54,3 @@ module disp_mux
      endcase // case (q_reg[N-1:N-2])
 
 endmodule // disp_mux
-
-	    
-	    
