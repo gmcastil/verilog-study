@@ -28,7 +28,7 @@ module heartbeat
       duration_next = duration_reg;
       stage_next = stage_reg;
       if (pulse_count_reg == PULSE_COUNT_MAX) begin
-         if (stage_reg == STAGE_MAX) begin
+         if (stage_reg == STAGE_MAX && duration_reg == DURATION_MAX) begin
             pulse_count_next = 0;
             stage_next = 0;
          end else begin
