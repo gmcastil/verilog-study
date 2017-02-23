@@ -29,27 +29,27 @@ module heartbeat
       stage_next = stage_reg;
       if (pulse_count_reg == PULSE_COUNT_MAX) begin
          if (stage_reg == STAGE_MAX && duration_reg == DURATION_MAX) begin
-            pulse_count_next = 0;
-            stage_next = 0;
+            pulse_count_next = 20'd0;
+            stage_next = 2'b00;
          end else begin
             if (duration_reg == DURATION_MAX) begin
-               stage_next = stage_reg + 1;
-               duration_next = 0;
+               stage_next = stage_reg + 1'b1;
+               duration_next = 17'd0;
             end else begin
-               duration_next = duration_reg + 1;
+               duration_next = duration_reg + 1'b1;
             end
          end
       end else begin
-         pulse_count_next = pulse_count_reg + 1;
+         pulse_count_next = pulse_count_reg + 1'b1;
       end
    end
 
    // -- sequential logic
    always @(posedge clk) begin
       if (reset) begin
-         pulse_count_reg      <= 0;
-         duration_reg         <= 0;
-         stage_reg            <= 0;
+         pulse_count_reg      <= 20'd0;
+         duration_reg         <= 17'd0;
+         stage_reg            <= 2'b00;
       end else begin
          pulse_count_reg     <= pulse_count_next;
          duration_reg        <= duration_next;
