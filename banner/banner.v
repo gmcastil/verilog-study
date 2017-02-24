@@ -46,8 +46,9 @@ module banner
          dig_2_next = dig_2_reg;
          dig_3_next = dig_3_reg;
          timer_next = timer_reg;
-      end else begin
-         if (dir) begin
+
+      end else if (dir) begin  // leftward shifting
+
             if (dig_0_reg == NULL && dig_1_reg == NULL &&
                 dig_2_reg == NULL && dig_3_reg == NULL) begin
 
@@ -134,6 +135,101 @@ module banner
                     end
 
                endcase // case (dig_1_reg)
+            end
+
+      end else begin // rightward shifting
+
+
+            if (dig_0_reg == NULL && dig_1_reg == NULL &&
+                dig_2_reg == NULL && dig_3_reg == NULL) begin
+
+               dig_0_next = NULL;
+               dig_1_next = NULL;
+               dig_2_next = NULL;
+               dig_3_next = NINE;
+
+            end else if (dig_0_reg == NULL && dig_1_reg == NULL &&
+                         dig_2_reg == NULL && dig_3_reg == NINE) begin
+
+               dig_0_next = NULL;
+               dig_1_next = NULL;
+               dig_2_next = NINE;
+               dig_3_next = EIGHT;
+
+            end else if (dig_0_reg == NULL && dig_1_reg == NULL &&
+                         dig_2_reg == NINE && dig_3_reg == EIGHT) begin
+
+               dig_0_next = NULL;
+               dig_1_next = NINE;
+               dig_2_next = EIGHT;
+               dig_3_next = SEVEN;
+
+            end else if (dig_0_reg == NULL && dig_1_reg == NINE &&
+                         dig_2_reg == EIGHT && dig_3_reg == SEVEN) begin
+
+               dig_0_next = NINE;
+               dig_1_next = EIGHT;
+               dig_2_next = SEVEN;
+               dig_3_next = SIX;
+
+            end else begin
+
+
+
+
+               // need to determine the next value for the rightmost digit
+
+               case (dig_1_reg)
+
+                 ZERO: begin
+                   dig_0_next = ONE;
+                 end
+
+                 ONE: begin
+                   dig_0_next = TWO;
+                 end
+
+                 TWO: begin
+                   dig_0_next = THREE;
+                 end
+
+                 THREE: begin
+                   dig_0_next = FOUR;
+                 end
+
+                 FOUR: begin
+                   dig_0_next = FIVE;
+                 end
+
+                 FIVE: begin
+                   dig_0_next = SIX;
+                 end
+
+                 SIX: begin
+                   dig_0_next = SEVEN;
+                 end
+
+                 SEVEN: begin
+                   dig_0_next = EIGHT;
+                 end
+
+                 EIGHT: begin
+                   dig_0_next = NINE;
+                 end
+
+                 NINE: begin
+                   dig_0_next = ZERO;
+                 end
+
+                 default: begin
+                    end
+
+               endcase // case (dig_1_reg)
+
+
+
+
+   end // always @ (*)
 
    // register
    always @(posedge clk) begin
