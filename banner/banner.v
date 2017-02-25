@@ -1,6 +1,6 @@
 module banner
   #(
-    parameter foo
+    parameter SHIFT_DELAY = (2**20) - 1
     )(
       input wire       clk,
       input wire       reset,
@@ -35,17 +35,21 @@ module banner
    reg [3:0]                    dig_2_next;
    reg [3:0]                    dig_3_next;
 
-   reg [18:0]                   timer_next;
-   reg [18:0]                   timer_reg;
+   reg [20:0]                   timer_next;
+   reg [20:0]                   timer_reg;
+   reg                          timer_tick;
 
    // next state logic
+
+   assign timer_tick = (timer_reg == SHIFT_DELAY) ? 1'b1 : 1'b0;
+   assign timer_next = (timer_reg == SHIFT_DELAY) ? 20'b0 : timer_reg + 1'b1;
+
    always @(*) begin
       if (!enable) begin
          dig_0_next = dig_0_reg;
          dig_1_next = dig_1_reg;
          dig_2_next = dig_2_reg;
          dig_3_next = dig_3_reg;
-         timer_next = timer_reg;
 
       end else if (dir) begin  // leftward shifting
 
@@ -139,7 +143,6 @@ module banner
 
       end else begin // rightward shifting
 
-
             if (dig_0_reg == NULL && dig_1_reg == NULL &&
                 dig_2_reg == NULL && dig_3_reg == NULL) begin
 
@@ -174,60 +177,58 @@ module banner
 
             end else begin
 
-
-
+               dig_2_next = dig_3_reg;
+               dig_1_next = dig_2_reg;
+               dig_0_next = dig_1_reg;
 
                // need to determine the next value for the rightmost digit
 
-               case (dig_1_reg)
+               case (dig_2_reg)
 
                  ZERO: begin
-                   dig_0_next = ONE;
+                   dig_3_next = ONE;
                  end
 
                  ONE: begin
-                   dig_0_next = TWO;
+                   dig_3_next = TWO;
                  end
 
                  TWO: begin
-                   dig_0_next = THREE;
+                   dig_3_next = THREE;
                  end
 
                  THREE: begin
-                   dig_0_next = FOUR;
+                   dig_3_next = FOUR;
                  end
 
                  FOUR: begin
-                   dig_0_next = FIVE;
+                   dig_3_next = FIVE;
                  end
 
                  FIVE: begin
-                   dig_0_next = SIX;
+                   dig_3_next = SIX;
                  end
 
                  SIX: begin
-                   dig_0_next = SEVEN;
+                   dig_3_next = SEVEN;
                  end
 
                  SEVEN: begin
-                   dig_0_next = EIGHT;
+                   dig_3_next = EIGHT;
                  end
 
                  EIGHT: begin
-                   dig_0_next = NINE;
+                   dig_3_next = NINE;
                  end
 
                  NINE: begin
-                   dig_0_next = ZERO;
+                   dig_3_next = ZERO;
                  end
 
                  default: begin
                     end
 
                endcase // case (dig_1_reg)
-
-
-
 
    end // always @ (*)
 
