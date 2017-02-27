@@ -1,7 +1,7 @@
 module heartbeat
    #(
-     parameter PULSE_COUNT_MAX = 1389000, // this gets us about 72Hz
-     parameter DURATION_MAX = (2**18) - 1  // 18-bit register
+     parameter PULSE_COUNT_MAX = 33554432 - 1,
+     parameter DURATION_MAX    = 7500000
      )
    (
     input  clk,
@@ -13,10 +13,10 @@ module heartbeat
     );
 
    // -- signal declarations
-   reg [20:0] pulse_count_reg;
-   reg [20:0] pulse_count_next;
-   reg [17:0] duration_reg; // may need to tweak this a bit
-   reg [17:0] duration_next;
+   reg [24:0] pulse_count_reg;
+   reg [24:0] pulse_count_next;
+   reg [24:0] duration_reg; // may need to tweak this a bit
+   reg [24:0] duration_next;
    reg [2:0]  stage_reg;
    reg [2:0]  stage_next;
 
