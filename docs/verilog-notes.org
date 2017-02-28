@@ -1,0 +1,114 @@
+* IEEE-1364-2001 Verilog Language Standard
+** Clauses
+*** DONE Clause 1 - Overview
+    CLOSED: [2017-02-27 Mon 21:12]
+*** DONE Clause 2 - Lexical conventions
+    CLOSED: [2017-02-27 Mon 21:12]
+*** READ Clause 3 - Data types
+*** READ Clause 4 - Expressions
+*** READ Clause 5 - Scheduling semantics
+*** READ Clause 6 - Assignments
+*** READ Clause 7 - Gate and switch level modeling
+*** READ Clause 8 - User defined primitives (UDP)
+*** READ Clause 9 - Behavioral modeling
+*** READ Clause 10 - Tasks and functions
+*** READ Clause 11 - Hierarchical structures
+*** READ Clause 13 - Configuring the contents of a design
+*** READ Clause 14 - Specify blocks
+*** READ Clause 15 - Timing checks
+*** READ Clause 16 - Backannotation using the Standard Delay Format (SDF)
+*** READ Clause 17 - System tasks and functions
+*** READ Clause 18 - Value change dump (VCD) files
+*** READ Clause 19 - Compiler directives
+*** READ Clause 20 - PLI overview
+*** READ Clause 21 - PLI TF and ACC interface mechanism
+*** READ Clause 22 - Using ACC routines
+*** READ Clause 23 - ACC routine definitions
+*** READ Clause 24 - Using TF routines
+*** READ Clause 25 - TF routine definitions
+*** READ Clause 26 - Using VPI routines
+*** READ Clause 27 - VPI routine definitions
+** Clause 1 - Overview
+Standard Delay Format (SDF) constructs
+Programming Language Interface (PLI) binding mechanism
+Backus Naur form
+1. Lowercase words denote syntactic categories
+2. Boldface for keywords, operators and punctuation marks as a required part of
+   the syntax.
+3. Vertical bar separates alternative items unless bolded.
+4. Square brackets enclose optional items.
+5. Braces enclose a repeated item
+** Clause 2 - Lexical conventions
+A point of clarification.  The Verilog language definition is described using
+[[https://en.wikipedia.org/wiki/Backus%25E2%2580%2593Naur_form][Backus Naur form]] and makes use of metasymbols such as "::=".  This can be
+interpreted as "is defined as".  The "|" is used separated alternative
+definitions and is interpreted as "or".  The names enclosed in <,> are
+delimiters enclosing a class name.
+
+*** Numbers
+Couple things to note here:
+1. The question mark (?) is a Verilog HDL alternative for the ~z~ character.  It
+   sets 4 bits to the high-impedance value in hex, 3 bits in octal, and 1 bit in
+   binary.  So for example, 12'hz would be a 12-bit high-impedance value.
+2. If the value is to be interpreted as signed, an ~s~ character precedes it.
+   So, 4'shf denotes the 4-bit number 1111 to be interpreted as a 2's complement
+   number.
+3. Automatic left padding is supported by the language.  So there is nothing
+   ambiguous about things like 32'b0 or 16'hz, which create a 32-bit zero number
+   and a 16-bit high-impedance number, respectively.
+4. The number of bits used to make up an unsized number (which is a simple
+   decimal number or a number without the size specification) shall be at least
+   32 bits.  So watch out when doing things like foo_reg = 0.
+5. Real numbers are double precision floating point values as defined by
+   IEEE-754.
+6. Conversion of reals to integers is done via rounding to the nearest integer,
+   rather than by truncating it.  Conversion occurs implicitly when a real
+   number is assigned to an integer
+
+*** Strings
+Things to note:
+1. I have no idea what strings mean in the context of design, probably in
+   verification though
+2. Strings are valid operands in expressions and assignments - they get treated
+   as unsigned integer constants represented by a sequence of 8-bit ASCII values
+   with one 8-bit ASCII value representing one character.
+3. Operations with strings work the same way as they do with values - if the LHS
+   is longer than the string on the RHS, it is extended with zeros.  If the RHS
+   is longer, then the leftmost bits are truncated and lost.
+4. Some characters can only be used when they are escaped (e.g., carriage
+   returns, backslash).
+
+*** Identifiers, keywords, and directives
+- List of all keywords in Annex B
+- The $ character introduces a language construct that enables development of
+  user-defined tasks and functions.  These are not design semantics, but refer
+  to simulator functionality.  These are described in Clause 17.
+- Compiler directives are introduced by a backtick (`).  These are described in
+  Clause 19.
+- Standard defines a way to specify properties about objects, statements, and
+  groups of statements in Verilog source.  These are referred to as *attributes*
+  and the standarde defines how to specify them, but not on what they mean.  An
+  example is the full_case, parallel_case attribute
+#+BEGIN_SRC  verilog
+(* full_case, parallel_case *)
+case (foo)
+  <rest_of_case_statement>
+endcase
+#+END_SRC
+- Attributes can also be used in less familiar ways like attaching attributes to
+  an operator or to a Verilog function.  There are several pages of tables
+  describing the syntax of attributes when used with operators, functions,
+  modules, and the rest of the language.
+** Clause 3 - Data types
+- Familiar four basic values are 0, 1, x, and z.
+- In addition to values, /strength/ can also be added.
+
+*** Nets and variables
+
+**** Nets
+- Represent physical connections between structural entities such as gates
+- Cannot store a value - rely on the value of its drivers such as a continuous
+  assignment or gate (clauses 16 and 17).
+-
+
+***
