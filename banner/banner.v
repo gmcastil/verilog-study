@@ -40,9 +40,10 @@ module banner
    reg                          timer_tick;
 
    // next state logic
-
+   assign timer_next = (timer_reg == SHIFT_DELAY && enable) ? 21'b1 :
+                       (enable) ? timer_reg + 1'b1 :
+                       timer_reg;
    assign timer_tick = (timer_reg == SHIFT_DELAY) ? 1'b1 : 1'b0;
-   assign timer_next = (timer_reg == SHIFT_DELAY) ? 20'b0 : timer_reg + 1'b1;
 
    always @(*) begin
       if (!enable) begin
@@ -51,7 +52,7 @@ module banner
          dig_2_next = dig_2_reg;
          dig_3_next = dig_3_reg;
 
-      end else if (dir) begin  // leftward shifting
+      end else if (dir && timer_tick) begin  // leftward shifting
 
             if (dig_0_reg == NULL && dig_1_reg == NULL &&
                 dig_2_reg == NULL && dig_3_reg == NULL) begin
@@ -141,7 +142,7 @@ module banner
                endcase // case (dig_1_reg)
             end
 
-      end else begin // rightward shifting
+      end else if (timer_tick) begin // rightward shifting
 
             if (dig_0_reg == NULL && dig_1_reg == NULL &&
                 dig_2_reg == NULL && dig_3_reg == NULL) begin
@@ -229,24 +230,34 @@ module banner
                     end
 
                endcase // case (dig_1_reg)
-
+            end // else: !if(dig_0_reg == NULL && dig_1_reg == NINE &&...
+      end // else: !if(dir)
    end // always @ (*)
+
 
    // register
    always @(posedge clk) begin
       if (reset) begin
-         dig_0_reg = NULL;
-         dig_1_reg = NULL;
-         dig_2_reg = NULL;
-         dig_3_reg = NULL;
-         timer_reg = 18'd0;
+         dig_0_reg <= NULL;
+         dig_1_reg <= NULL;
+         dig_2_reg <= NULL;
+         dig_3_reg <= NULL;
+         timer_reg <= 21'b0;
       end else begin
-         dig_0_reg = dig_0_next;
-         dig_1_reg = dig_1_next;
-         dig_2_reg = dig_2_next;
-         dig_3_reg = dig_3_next;
-         timer_reg = timer_next;
+         dig_0_reg <= dig_0_next;
+         dig_1_reg <= dig_1_next;
+         dig_2_reg <= dig_2_next;
+         dig_3_reg <= dig_3_next;
+         timer_reg <= timer_next;
       end // else: !if(reset)
    end // always @ (posedge clk)
 
    // output logic
+   always @(*) begin
+     dig_0 = dig_0_reg;
+     dig_1 = dig_1_reg;
+     dig_2 = dig_2_reg;
+     dig_3 = dig_3_reg;
+   end
+
+endmodule
