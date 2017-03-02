@@ -1,19 +1,18 @@
 module banner
   #(
-    parameter SHIFT_DELAY = (2**20) - 1
+    parameter POWER = 23
     )(
       input wire       clk,
       input wire       reset,
       input wire       enable,
       input wire       dir,
-      output reg [3:0] dig_0,
-      output reg [3:0] dig_1,
-      output reg [3:0] dig_2,
-      output reg [3:0] dig_3
+      output reg [3:0] bcd_0_reg,
+      output reg [3:0] bcd_1_reg,
+      output reg [3:0] bcd_2_reg,
+      output reg [3:0] bcd_3_reg
       );
 
    // signal declaration
-   localparam NULL  = 4'b1111;
    localparam ZERO  = 4'b0000;
    localparam ONE   = 4'b0001;
    localparam TWO   = 4'b0010;
@@ -25,239 +24,157 @@ module banner
    localparam EIGHT = 4'b1000;
    localparam NINE  = 4'b1001;
 
-   reg [3:0]                    dig_0_reg;
-   reg [3:0]                    dig_1_reg;
-   reg [3:0]                    dig_2_reg;
-   reg [3:0]                    dig_3_reg;
+   localparam DVSR = 2**POWER - 1;
 
-   reg [3:0]                    dig_0_next;
-   reg [3:0]                    dig_1_next;
-   reg [3:0]                    dig_2_next;
-   reg [3:0]                    dig_3_next;
+   reg [3:0]           bcd_0_next;
+   reg [3:0]           bcd_1_next;
+   reg [3:0]           bcd_2_next;
+   reg [3:0]           bcd_3_next;
 
-   reg [20:0]                   timer_next;
-   reg [20:0]                   timer_reg;
-   reg                          timer_tick;
+   reg [22:0]          timer_next;
+   reg [22:0]          timer_reg;
+   reg                 timer_tick;
 
-   // next state logic
-   assign timer_next = (timer_reg == SHIFT_DELAY && enable) ? 21'b1 :
+   // --- Next State Logic
+   assign timer_next = (timer_reg == DVSR && enable) ? 23'b0 :
                        (enable) ? timer_reg + 1'b1 :
                        timer_reg;
-   assign timer_tick = (timer_reg == SHIFT_DELAY) ? 1'b1 : 1'b0;
+   assign timer_tick = (timer_reg == DVSR) ? 1'b1 : 1'b0;
 
    always @(*) begin
-      if (!enable) begin
-         dig_0_next = dig_0_reg;
-         dig_1_next = dig_1_reg;
-         dig_2_next = dig_2_reg;
-         dig_3_next = dig_3_reg;
 
-      end else if (dir && timer_tick) begin  // leftward shifting
+      bcd_0_reg = bcd_0_next;
+      bcd_1_reg = bcd_1_next;
+      bcd_2_reg = bcd_2_next;
+      bcd_3_reg = bcd_3_next;
 
-            if (dig_0_reg == NULL && dig_1_reg == NULL &&
-                dig_2_reg == NULL && dig_3_reg == NULL) begin
+      if (enable && timer_tick) begin
+         if (dir) begin  // shift to the left
 
-               dig_0_next = ZERO;
-               dig_1_next = NULL;
-               dig_2_next = NULL;
-               dig_3_next = NULL;
+            bcd_3_next = bcd_2_reg;
+            bcd_2_next = bcd_1_reg;
+            bcd_1_next = bcd_0_reg;
 
-            end else if (dig_0_reg == ZERO && dig_1_reg == NULL &&
-                         dig_2_reg == NULL && dig_3_reg == NULL) begin
+            // use the leftmost digit to determine the next one
+            case (bcd_0_reg)
 
-               dig_0_next = ONE;
-               dig_1_next = ZERO;
-               dig_2_next = NULL;
-               dig_3_next = NULL;
+              ZERO: begin
+                 bcd_0_next = ONE;
+              end
 
-            end else if (dig_0_reg == ONE && dig_1_reg == ZERO &&
-                         dig_2_reg == NULL && dig_3_reg == NULL) begin
+              ONE: begin
+                 bcd_0_next = TWO;
+              end
 
-               dig_0_next = TWO;
-               dig_1_next = ONE;
-               dig_2_next = ZERO;
-               dig_3_next = NULL;
+              TWO: begin
+                 bcd_0_next = THREE;
+              end
 
-            end else if (dig_0_reg == TWO && dig_1_reg == ONE &&
-                         dig_2_reg == ZERO && dig_3_reg == NULL) begin
+              THREE: begin
+                 bcd_0_next = FOUR;
+              end
 
-               dig_0_next = THREE;
-               dig_1_next = TWO;
-               dig_2_next = ONE;
-               dig_3_next = ZERO;
+              FOUR: begin
+                 bcd_0_next = FIVE;
+              end
 
-            end else begin
+              FIVE: begin
+                 bcd_0_next = SIX;
+              end
 
-               dig_3_next = dig_2_reg;
-               dig_2_next = dig_1_reg;
-               dig_1_next = dig_0_reg;
+              SIX: begin
+                 bcd_0_next = SEVEN;
+              end
 
-               // need to determine the next value for the rightmost digit
+              SEVEN: begin
+                 bcd_0_next = EIGHT;
+              end
 
-               case (dig_1_reg)
+              EIGHT: begin
+                 bcd_0_next = NINE;
+              end
 
-                 ZERO: begin
-                   dig_0_next = ONE;
-                 end
+              NINE: begin
+                 bcd_0_next = ZERO;
+              end
 
-                 ONE: begin
-                   dig_0_next = TWO;
-                 end
+              default: begin
+              end
+            endcase // case (bcd_1_reg)
 
-                 TWO: begin
-                   dig_0_next = THREE;
-                 end
+         end else begin  // shifting to the right
 
-                 THREE: begin
-                   dig_0_next = FOUR;
-                 end
+            bcd_0_next = bcd_1_reg;
+            bcd_1_next = bcd_2_reg;
+            bcd_2_next = bcd_3_reg;
 
-                 FOUR: begin
-                   dig_0_next = FIVE;
-                 end
+            // use rightmost digit to determine the next one
+            case (bcd_3_reg)
 
-                 FIVE: begin
-                   dig_0_next = SIX;
-                 end
+              ZERO: begin
+                 bcd_3_next = NINE;
+              end
 
-                 SIX: begin
-                   dig_0_next = SEVEN;
-                 end
+              ONE: begin
+                 bcd_3_next = ZERO;
+              end
 
-                 SEVEN: begin
-                   dig_0_next = EIGHT;
-                 end
+              TWO: begin
+                 bcd_3_next = ONE;
+              end
 
-                 EIGHT: begin
-                   dig_0_next = NINE;
-                 end
+              THREE: begin
+                 bcd_3_next = TWO;
+              end
 
-                 NINE: begin
-                   dig_0_next = ZERO;
-                 end
+              FOUR: begin
+                 bcd_3_next = THREE;
+              end
 
-                 default: begin
-                    end
+              FIVE: begin
+                 bcd_3_next = FOUR;
+              end
 
-               endcase // case (dig_1_reg)
-            end
+              SIX: begin
+                 bcd_3_next = FIVE;
+              end
 
-      end else if (timer_tick) begin // rightward shifting
+              SEVEN: begin
+                 bcd_3_next = SIX;
+              end
 
-            if (dig_0_reg == NULL && dig_1_reg == NULL &&
-                dig_2_reg == NULL && dig_3_reg == NULL) begin
+              EIGHT: begin
+                 bcd_3_next = SEVEN;
+              end
 
-               dig_0_next = NULL;
-               dig_1_next = NULL;
-               dig_2_next = NULL;
-               dig_3_next = NINE;
+              NINE: begin
+                 bcd_3_next = ZERO;
+              end
 
-            end else if (dig_0_reg == NULL && dig_1_reg == NULL &&
-                         dig_2_reg == NULL && dig_3_reg == NINE) begin
+              default: begin end
 
-               dig_0_next = NULL;
-               dig_1_next = NULL;
-               dig_2_next = NINE;
-               dig_3_next = EIGHT;
-
-            end else if (dig_0_reg == NULL && dig_1_reg == NULL &&
-                         dig_2_reg == NINE && dig_3_reg == EIGHT) begin
-
-               dig_0_next = NULL;
-               dig_1_next = NINE;
-               dig_2_next = EIGHT;
-               dig_3_next = SEVEN;
-
-            end else if (dig_0_reg == NULL && dig_1_reg == NINE &&
-                         dig_2_reg == EIGHT && dig_3_reg == SEVEN) begin
-
-               dig_0_next = NINE;
-               dig_1_next = EIGHT;
-               dig_2_next = SEVEN;
-               dig_3_next = SIX;
-
-            end else begin
-
-               dig_2_next = dig_3_reg;
-               dig_1_next = dig_2_reg;
-               dig_0_next = dig_1_reg;
-
-               // need to determine the next value for the rightmost digit
-
-               case (dig_2_reg)
-
-                 ZERO: begin
-                   dig_3_next = ONE;
-                 end
-
-                 ONE: begin
-                   dig_3_next = TWO;
-                 end
-
-                 TWO: begin
-                   dig_3_next = THREE;
-                 end
-
-                 THREE: begin
-                   dig_3_next = FOUR;
-                 end
-
-                 FOUR: begin
-                   dig_3_next = FIVE;
-                 end
-
-                 FIVE: begin
-                   dig_3_next = SIX;
-                 end
-
-                 SIX: begin
-                   dig_3_next = SEVEN;
-                 end
-
-                 SEVEN: begin
-                   dig_3_next = EIGHT;
-                 end
-
-                 EIGHT: begin
-                   dig_3_next = NINE;
-                 end
-
-                 NINE: begin
-                   dig_3_next = ZERO;
-                 end
-
-                 default: begin
-                    end
-
-               endcase // case (dig_1_reg)
-            end // else: !if(dig_0_reg == NULL && dig_1_reg == NINE &&...
-      end // else: !if(dir)
+            endcase // case (bcd_3_reg)
+         end // else: !if(dir)
+      end // if (enable && timer_tick)
    end // always @ (*)
 
-
-   // register
+   // --- Sequential Logic
    always @(posedge clk) begin
       if (reset) begin
-         dig_0_reg <= NULL;
-         dig_1_reg <= NULL;
-         dig_2_reg <= NULL;
-         dig_3_reg <= NULL;
-         timer_reg <= 21'b0;
-      end else begin
-         dig_0_reg <= dig_0_next;
-         dig_1_reg <= dig_1_next;
-         dig_2_reg <= dig_2_next;
-         dig_3_reg <= dig_3_next;
-         timer_reg <= timer_next;
-      end // else: !if(reset)
-   end // always @ (posedge clk)
+         bcd_0_reg <= THREE;
+         bcd_1_reg <= TWO;
+         bcd_2_reg <= ONE;
+         bcd_3_reg <= ZERO;
 
-   // output logic
-   always @(*) begin
-     dig_0 = dig_0_reg;
-     dig_1 = dig_1_reg;
-     dig_2 = dig_2_reg;
-     dig_3 = dig_3_reg;
+         timer_reg <= 23'b0;
+      end else begin
+         bcd_0_reg <= bcd_0_next;
+         bcd_1_reg <= bcd_1_next;
+         bcd_2_reg <= bcd_2_next;
+         bcd_3_reg <= bcd_3_next;
+
+         timer_reg <= timer_next;
+      end
    end
 
-endmodule
+endmodule // banner
