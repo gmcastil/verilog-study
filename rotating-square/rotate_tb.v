@@ -6,6 +6,11 @@ module rotate_tb ();
    reg reset;
    reg enable;
    reg clockwise;
+   
+   wire [7:0] in0;
+   wire [7:0] in1;
+   wire [7:0] in2;
+   wire [7:0] in3;
 
    localparam T=10;  // 10ns clock period
 
@@ -18,15 +23,18 @@ module rotate_tb ();
 
    rotate
      #(
-       .POWER       (1)
+       .POWER       (2)
        ) code_under_test(
          /* input  */    .clk          (clk_100m),
          /* input  */    .reset        (reset),
          /* input  */    .enable       (enable),
          /* input  */    .clockwise    (clockwise),
-         /* output */    .sseg_pattern (),
-         /* output */    .an           ()
+         /* output */    .in0          (in0),
+         /* output */    .in1          (in1),
+         /* output */    .in2          (in2),
+         /* output */    .in3          (in3)
                          );
+
 
    initial begin
       enable = 1'b1;

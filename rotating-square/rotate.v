@@ -1,54 +1,51 @@
 module rotate
   #(
-    parameter POWER = 8
-    )
+  parameter POWER = 24
+  )
   (
    input wire       clk,
    input wire       reset,
    input wire       enable,
    input wire       clockwise,
-   output reg [7:0] sseg_pattern,
-   output reg [3:0] an
+
+   output reg [7:0] in0,
+   output reg [7:0] in1,
+   output reg [7:0] in2,
+   output reg [7:0] in3
    );
 
    // constant declarations
-   localparam DVSR = 10**POWER;  // default is a 100MHz clock with 1s transition
-   localparam LOW_PATTERN  = 8'b1010_0001;  // lower square of a SSEG digit
-   localparam HIGH_PATTERN = 8'b1101_1110;  // upper square of a SSEG digit
+   localparam DVSR = 2**POWER - 1;
+
+   localparam LOW_PATTERN   = 8'b10101100;  // lower square of a SSEG digit
+   localparam HIGH_PATTERN  = 8'b10011100;  // upper square of a SSEG digit
+   localparam BLANK_PATTERN = 8'b11111111;  // blank SSEG digit
 
    // signal declarations
-   wire [23:0]       timer_next;
-   reg [23:0]        timer_reg;
-   wire              timer_tick;
+   wire [23:0]      timer_next;
+   reg [23:0]       timer_reg;
+   wire             timer_tick;  // true when time to switch positions
 
-   reg [2:0]         count_next;
-   reg [2:0]         count_reg;
+   reg [2:0]        count_next;  // square positions to mux and decode for output
+   reg [2:0]        count_reg;
 
    // -- Next State Logic
-
-   // generate the following:
-   //   - tick every second for managing state transitions
-   //   - pause everything when not enabled
-   assign timer_next = (!enable) ? timer_reg :
-                       (enable && timer_reg == DVSR) ? 0 :
-                       timer_reg + 1;
-
-   assign timer_tick = (enable && timer_reg == DVSR) ? 1'b1 :
-                       1'b0;
+   assign timer_next = (timer_reg == DVSR && enable) ? 24'b0 :
+                       (enable) ? timer_reg + 1'b1 :
+                       timer_reg;
+   assign timer_tick = (timer_reg == DVSR) ? 1'b1 : 1'b0;
 
    always @(*) begin
-      // default is to keep the same unless there is a tick or the system
-      // is not enabled
-      count_next = count_reg;
-      if (!enable) begin
-         count_next = count_reg;
-      end else if (timer_tick) begin
-         if (clockwise) begin
-            count_next = count_reg + 1;
-         end else begin
-            count_next = count_reg - 1;
-         end
-      end
+     count_next = count_reg;
+     if (enable) begin
+        if (timer_tick == 1'b1) begin
+           if (clockwise) begin
+              count_next = count_reg + 1'b1;
+           end else begin
+              count_next = count_reg - 1'b1;
+           end
+        end
+     end
    end // always @ (*)
 
    // -- Sequential Logic
@@ -67,46 +64,70 @@ module rotate
 
       case (count_reg)
 
-        0:
+        3'b000:
           begin
-             sseg_pattern = LOW_PATTERN;
-             an = 4'b1110;
+             in0 = LOW_PATTERN;
+             in1 = BLANK_PATTERN;
+             in2 = BLANK_PATTERN;
+             in3 = BLANK_PATTERN;
           end
-        1:
+        3'b001:
           begin
-             sseg_pattern = LOW_PATTERN;
-             an = 4'b1101;
+             in0 = BLANK_PATTERN;
+             in1 = LOW_PATTERN;
+             in2 = BLANK_PATTERN;
+             in3 = BLANK_PATTERN;
           end
-        2:
+        3'b010:
           begin
-             sseg_pattern = LOW_PATTERN;
-             an = 4'b1011;
+             in0 = BLANK_PATTERN;
+             in1 = BLANK_PATTERN;
+             in2 = LOW_PATTERN;
+             in3 = BLANK_PATTERN;
           end
-        3:
+        3'b011:
           begin
-             sseg_pattern = LOW_PATTERN;
-             an = 4'b0111;
+             in0 = BLANK_PATTERN;
+             in1 = BLANK_PATTERN;
+             in2 = BLANK_PATTERN;
+             in3 = LOW_PATTERN;
           end
-        4:
+        3'b100:
           begin
-             sseg_pattern = HIGH_PATTERN;
-             an = 4'b0111;
+             in0 = BLANK_PATTERN;
+             in1 = BLANK_PATTERN;
+             in2 = BLANK_PATTERN;
+             in3 = HIGH_PATTERN;
           end
-        5:
+        3'b101:
           begin
-             sseg_pattern = HIGH_PATTERN;
-             an = 4'b1011;
+             in0 = BLANK_PATTERN;
+             in1 = BLANK_PATTERN;
+             in2 = HIGH_PATTERN;
+             in3 = BLANK_PATTERN;
           end
-        6:
+        3'b110:
           begin
-             sseg_pattern = HIGH_PATTERN;
-             an = 4'b1101;
+             in0 = BLANK_PATTERN;
+             in1 = HIGH_PATTERN;
+             in2 = BLANK_PATTERN;
+             in3 = BLANK_PATTERN;
           end
-        7:
+        3'b111:
           begin
-             sseg_pattern = HIGH_PATTERN;
-             an = 4'b1110;
+             in0 = HIGH_PATTERN;
+             in1 = BLANK_PATTERN;
+             in2 = BLANK_PATTERN;
+             in3 = BLANK_PATTERN;
           end
+        default:
+          begin
+             in0 = BLANK_PATTERN;
+             in1 = BLANK_PATTERN;
+             in2 = BLANK_PATTERN;
+             in3 = BLANK_PATTERN;
+          end
+         
       endcase // case (count_reg)
    end // always @ (*)
 
