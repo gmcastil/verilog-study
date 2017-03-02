@@ -8,10 +8,10 @@ module rotate_top(
                   output wire [7:0] digit
                   );
 
-   reg [7:0]                       in0;
-   reg [7:0]                       in1;
-   reg [7:0]                       in2;
-   reg [7:0]                       in3;
+   wire [7:0]                       in0;
+   wire [7:0]                       in1;
+   wire [7:0]                       in2;
+   wire [7:0]                       in3;
 
    rotate rotating_box
      (.clk(clk),

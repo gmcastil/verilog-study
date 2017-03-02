@@ -1,6 +1,6 @@
 module rotate
   #(
-  parameter POWER = 24
+  parameter POWER = 23
   )
   (
    input wire       clk,
@@ -17,20 +17,20 @@ module rotate
    // constant declarations
    localparam DVSR = 2**POWER - 1;
 
-   localparam LOW_PATTERN   = 8'b10101100;  // lower square of a SSEG digit
+   localparam LOW_PATTERN   = 8'b10100011;  // lower square of a SSEG digit
    localparam HIGH_PATTERN  = 8'b10011100;  // upper square of a SSEG digit
    localparam BLANK_PATTERN = 8'b11111111;  // blank SSEG digit
 
    // signal declarations
-   wire [23:0]      timer_next;
-   reg [23:0]       timer_reg;
+   wire [22:0]      timer_next;
+   reg [22:0]       timer_reg;
    wire             timer_tick;  // true when time to switch positions
 
    reg [2:0]        count_next;  // square positions to mux and decode for output
    reg [2:0]        count_reg;
 
    // -- Next State Logic
-   assign timer_next = (timer_reg == DVSR && enable) ? 24'b0 :
+   assign timer_next = (timer_reg == DVSR && enable) ? 23'b0 :
                        (enable) ? timer_reg + 1'b1 :
                        timer_reg;
    assign timer_tick = (timer_reg == DVSR) ? 1'b1 : 1'b0;
@@ -127,7 +127,7 @@ module rotate
              in2 = BLANK_PATTERN;
              in3 = BLANK_PATTERN;
           end
-         
+
       endcase // case (count_reg)
    end // always @ (*)
 
