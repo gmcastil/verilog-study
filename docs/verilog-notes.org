@@ -104,11 +104,33 @@ endcase
 - In addition to values, /strength/ can also be added.
 
 *** Nets and variables
-
+Two main groups of data are *variables* and *nets*.
 **** Nets
 - Represent physical connections between structural entities such as gates
 - Cannot store a value - rely on the value of its drivers such as a continuous
   assignment or gate (clauses 16 and 17).
--
+- Can also include a drive and charge strength
+- Wires are a type of net
+**** Variables
+- Abstraction of data storage elements
+- Several types including signed and unsigned reg, real, integer, and time
+  variables
 
-***
+*** Vectors
+Nets or reg declarations without a range specified are scalars. Multiple bit net
+and reg data types (vectors) are declared with a range. There are some
+subtleties with specifying ranges.  The range specification in the standard
+defines the LH value in the range to be the /msb/ constant expression and the RH
+value in the range is then the /lsb/ constant expression. However, the /msb/ and
+the /lsb/ are free to be any value - positive, negative, or zero, hence the
+/lsb/ can actually be greater than the /msb/. This is a little odd and can
+create some confusion when using the -: and +: operators. There appear to be at
+least two conventions when indexing vectors:
+- Arrays should always, unless there is a good reason, be 0-indexed count down
+- The opposite convention holds for unpacked arrays - these are generally
+  1-indexed and count up.
+
+*** Strengths
+- Drive strength which is used when placing a continuous assignment on a net
+- Charge strength which is used for declaring a *trireg* type net used to model
+  net capacitance.
