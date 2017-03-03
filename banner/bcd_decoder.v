@@ -52,15 +52,10 @@ module bcd_decoder (
              sseg_digit[6:0] = 7'b0000000;
           end
 
-        4'b1001 :
+        default :
           begin
              sseg_digit[6:0] = 7'b0000110;
           end
-
-        default :
-          begin
-          end
-
       endcase // case (bcd_digit)
       sseg_digit[7] = ~dp;
 

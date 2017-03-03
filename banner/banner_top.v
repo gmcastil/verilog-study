@@ -5,20 +5,20 @@ module banner_top
       input wire reset,
       input wire enable,
       input wire dir,
-      output reg [3:0] an,
-      output reg [7:0] digit
+      output wire [3:0] an,
+      output wire [7:0] digit
       );
 
    // signal declaration
-   reg [3:0]           bcd_0;
-   reg [3:0]           bcd_1;
-   reg [3:0]           bcd_2;
-   reg [3:0]           bcd_3;
+   wire [3:0]           bcd_0;
+   wire [3:0]           bcd_1;
+   wire [3:0]           bcd_2;
+   wire [3:0]           bcd_3;
 
-   reg [7:0]           in0;
-   reg [7:0]           in1;
-   reg [7:0]           in2;
-   reg [7:0]           in3;
+   wire [7:0]           in0;
+   wire [7:0]           in1;
+   wire [7:0]           in2;
+   wire [7:0]           in3;
 
    // instantiate the banner module
    banner u_banner
