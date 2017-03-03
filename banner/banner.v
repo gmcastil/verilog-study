@@ -31,9 +31,9 @@ module banner
    reg [3:0]           bcd_2_next;
    reg [3:0]           bcd_3_next;
 
-   reg [22:0]          timer_next;
-   reg [22:0]          timer_reg;
-   reg                 timer_tick;
+   wire [22:0]          timer_next;
+   reg  [22:0]          timer_reg;
+   wire                 timer_tick;
 
    // --- Next State Logic
    assign timer_next = (timer_reg == DVSR && enable) ? 23'b0 :
@@ -43,10 +43,10 @@ module banner
 
    always @(*) begin
 
-      bcd_0_reg = bcd_0_next;
-      bcd_1_reg = bcd_1_next;
-      bcd_2_reg = bcd_2_next;
-      bcd_3_reg = bcd_3_next;
+      bcd_0_next = bcd_0_reg;
+      bcd_1_next = bcd_1_reg;
+      bcd_2_next = bcd_2_reg;
+      bcd_3_next = bcd_3_reg;
 
       if (enable && timer_tick) begin
          if (dir) begin  // shift to the left
@@ -148,7 +148,7 @@ module banner
               end
 
               NINE: begin
-                 bcd_3_next = ZERO;
+                 bcd_3_next = EIGHT;
               end
 
               default: begin end

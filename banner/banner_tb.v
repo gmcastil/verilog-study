@@ -2,14 +2,14 @@
 
 module banner_tb ();
 
-   wire       clk;
-   wire       reset;
-   wire       enable;
-   wire       dir;
-   reg [3:0]  dig_0;
-   reg [3:0]  dig_1;
-   reg [3:0]  dig_2;
-   reg [3:0]  dig_3;
+   reg        clk;
+   reg        reset;
+   reg        enable;
+   reg        dir;
+   wire [3:0]  dig_0;
+   wire [3:0]  dig_1;
+   wire [3:0]  dig_2;
+   wire [3:0]  dig_3;
 
    localparam T=10;  // 10ns clock period
 
@@ -28,7 +28,7 @@ module banner_tb ();
       reset = 1'b0;
       dir = 1'b1;
       // run for 100 cycles to the left
-      #(100*T);
+      #(98*T);
       // hold in reset for 1.5 clock cyles
       reset = 1'b1;
       #(3*T/2);
@@ -42,16 +42,16 @@ module banner_tb ();
 
    banner
      #(
-       /* parameters */
+       /* parameters */                    .POWER       (1)
        ) code_under_test(
-                         /* input  */     .clk      (clk),
-                         /* input  */     .reset    (reset),
-                         /* input  */     .enable   (enable),
-                         /* input  */     .dir      (dir),
-                         /* output */     .dig_0    (dig_0),
-                         /* output */     .dig_1    (dig_1),
-                         /* output */     .dig_2    (dig_2),
-                         /* output */     .dig_3    (dig_3)
+                         /* input  */     .clk          (clk),
+                         /* input  */     .reset        (reset),
+                         /* input  */     .enable       (enable),
+                         /* input  */     .dir          (dir),
+                         /* output */     .bcd_0_reg    (dig_0),
+                         /* output */     .bcd_1_reg    (dig_1),
+                         /* output */     .bcd_2_reg    (dig_2),
+                         /* output */     .bcd_3_reg    (dig_3)
                          );
 
 endmodule
