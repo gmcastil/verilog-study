@@ -17,7 +17,7 @@ set_property PACKAGE_PIN V4 [get_ports {an[2]}]
 set_property PACKAGE_PIN W4 [get_ports {an[3]}]
     set_property IOSTANDARD LVCMOS33 [get_ports {an[3]}]
 
-# SSEG display - from Digilent master.xdc and seems to finally work properly                
+# SSEG display
 set_property PACKAGE_PIN W7 [get_ports {digit[0]}]
     set_property IOSTANDARD LVCMOS33 [get_ports {digit[0]}]
 set_property PACKAGE_PIN W6 [get_ports {digit[1]}]
@@ -35,5 +35,12 @@ set_property PACKAGE_PIN U7 [get_ports {digit[6]}]
 set_property PACKAGE_PIN V7 [get_ports {digit[7]}]
     set_property IOSTANDARD LVCMOS33 [get_ports {digit[7]}]
 
-set_property PACKAGE_PIN T18 [get_ports reset]
-	set_property IOSTANDARD LVCMOS33 [get_ports reset]
+# switches
+set_property PACKAGE_PIN V17 [get_ports enable]
+	set_property IOSTANDARD LVCMOS33 [get_ports enable]
+set_property PACKAGE_PIN V16 [get_ports dir]
+	set_property IOSTANDARD LVCMOS33 [get_ports dir]
+
+# pushbutton switches
+set_property PACKAGE_PIN U18 [get_ports reset]
+    set_property IOSTANDARD LVCMOS33 [get_ports reset]
