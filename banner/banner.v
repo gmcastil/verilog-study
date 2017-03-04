@@ -1,6 +1,6 @@
 module banner
   #(
-    parameter POWER = 23
+    parameter POWER = 26
     )(
       input wire       clk,
       input wire       reset,
@@ -31,12 +31,12 @@ module banner
    reg [3:0]           bcd_2_next;
    reg [3:0]           bcd_3_next;
 
-   wire [22:0]          timer_next;
-   reg  [22:0]          timer_reg;
+   wire [POWER-1:0]         timer_next;
+   reg  [POWER-1:0]         timer_reg;
    wire                 timer_tick;
 
    // --- Next State Logic
-   assign timer_next = (timer_reg == DVSR && enable) ? 23'b0 :
+   assign timer_next = (timer_reg == DVSR && enable) ? {POWER{1'b0}} :
                        (enable) ? timer_reg + 1'b1 :
                        timer_reg;
    assign timer_tick = (timer_reg == DVSR) ? 1'b1 : 1'b0;
@@ -166,7 +166,7 @@ module banner
          bcd_2_reg <= ONE;
          bcd_3_reg <= ZERO;
 
-         timer_reg <= 23'b0;
+         timer_reg <= {POWER{1'b0}};
       end else begin
          bcd_0_reg <= bcd_0_next;
          bcd_1_reg <= bcd_1_next;
