@@ -4,7 +4,8 @@
     CLOSED: [2017-02-27 Mon 21:12]
 *** DONE Clause 2 - Lexical conventions
     CLOSED: [2017-02-27 Mon 21:12]
-*** READ Clause 3 - Data types
+*** DONE READ Clause 3 - Data types
+    CLOSED: [2017-03-03 Fri 18:36]
 *** READ Clause 4 - Expressions
 *** READ Clause 5 - Scheduling semantics
 *** READ Clause 6 - Assignments
@@ -134,3 +135,5 @@ least two conventions when indexing vectors:
 - Drive strength which is used when placing a continuous assignment on a net
 - Charge strength which is used for declaring a *trireg* type net used to model
   net capacitance.
+
+*** Arrays
