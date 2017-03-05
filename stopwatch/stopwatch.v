@@ -24,10 +24,11 @@ module stopwatch
 
    // signal declarations
    wire [23:0]        timer_next;
-   wire [3:0]         bcd_0_next;
-   wire [3:0]         bcd_1_next;
-   wire [3:0]         bcd_2_next;
-   wire [3:0]         bcd_3_next;
+   wire [23:0]        timer_tick;
+   reg  [3:0]         bcd_0_next;
+   reg  [3:0]         bcd_1_next;
+   reg  [3:0]         bcd_2_next;
+   reg  [3:0]         bcd_3_next;
 
    reg [23:0]         timer_reg;
    reg [3:0]          bcd_0_reg;
@@ -38,10 +39,10 @@ module stopwatch
    // next state logic
 
    // work out the 100ms tick that everything else is driven by
-   assign timer_next = (timer_reg == DVSR && enable) ? {power{1'b0}} :
+   assign timer_next = (timer_reg == DVSR && enable) ? {POWER{1'b0}} :
                        (enable) ? timer_reg + 1'b1 :
                        timer_reg;
-   assign timer_tick = {timer_reg == DVSR) ? 1'b1 : 1'b0;
+   assign timer_tick = (timer_reg == DVSR) ? 1'b1 : 1'b0;
 
    always @(*) begin
       if (enable && timer_tick) begin
