@@ -26,7 +26,7 @@ module stopwatch_top
       /* input  */     .enable           (enable),
       /* input  */     .up               (up),
       /* input  */     .reset            (reset),
-      /* output */     .digits           ({in3, in2, in1, in0})
+      /* output */     .digits           ({bcd_3, bcd_2, bcd_1, bcd_0})
       );
 
    bcd_decoder dig_0
@@ -67,7 +67,7 @@ module stopwatch_top
       /* input */     .in1               (in1),
       /* input */     .in0               (in0),
       /* output */    .an                (an),
-      /* output */    .sseg              ({in3, in2, in1, in0}))
+      /* output */    .sseg              (digit))
      );
 
 endmodule
