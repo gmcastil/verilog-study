@@ -91,15 +91,6 @@ module stopwatch
       end // if (enable && timer_tick)
    end // always @ (*)
 
-
-
-
-
-
-
-
-
-
    // sequential logic
    always @(posedge clk) begin
       if (reset) begin
@@ -118,3 +109,6 @@ module stopwatch
    end // always @ (posedge clk)
 
    // output logic
+   assign digits = {bcd_3_reg, bcd_2_reg, bcd_1_reg, bcd_0_reg};
+
+endmodule // stopwatch
