@@ -1,6 +1,6 @@
 module stopwatch
   #(
-    parameter POWER = 23
+    parameter POWER = 24
     )(
       input wire         clk,
       input wire         enable,
@@ -24,7 +24,7 @@ module stopwatch
 
    // signal declarations
    wire [23:0]        timer_next;
-   wire [23:0]        timer_tick;
+   wire               timer_tick;
    reg  [3:0]         bcd_0_next;
    reg  [3:0]         bcd_1_next;
    reg  [3:0]         bcd_2_next;
@@ -99,7 +99,7 @@ module stopwatch
          bcd_1_reg <= ZERO;
          bcd_2_reg <= ZERO;
          bcd_3_reg <= ZERO;
-         timer_reg <= ZERO;
+         timer_reg <= {POWER{1'b0}};
       end else begin
          bcd_0_reg <= bcd_0_next;
          bcd_1_reg <= bcd_1_next;
