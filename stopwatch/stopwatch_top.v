@@ -39,7 +39,7 @@ module stopwatch_top
    bcd_decoder dig_1
      (
       /* input  */     .bcd_digit        (bcd_1),
-      /* input  */     .dp               (1'b1),
+      /* input  */     .dp               (1'b0),
       /* output */     .sseg_digit       (in1)
       );
 
