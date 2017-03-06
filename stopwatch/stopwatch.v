@@ -36,7 +36,7 @@ module stopwatch
    reg [3:0]          bcd_2_reg;
    reg [3:0]          bcd_3_reg;
 
-   // next state logic
+   // --- Next State Logic
 
    // work out the 100ms tick that everything else is driven by
    assign timer_next = (timer_reg == DVSR && enable) ? {POWER{1'b0}} :
@@ -65,9 +65,9 @@ module stopwatch
                   bcd_1_next = bcd_1_reg + 1'b1;
                end
             end else begin
-               bcd_0_next = bcd_0_reg +1'b1;
+               bcd_0_next = bcd_0_reg + 1'b1;
             end
-         end else begin // now we're counting downwards
+         end else begin
             if (bcd_0_reg == ZERO) begin
                bcd_0_next = NINE;
                if (bcd_1_reg == ZERO) begin
@@ -75,24 +75,24 @@ module stopwatch
                   if (bcd_2_reg == ZERO) begin
                      bcd_2_next = NINE;
                      if (bcd_3_reg == ZERO) begin
-                        bcd_3_next = NINE;
+                        bcd_3_next = bcd_3_reg - 1'b1;
                      end else begin
                         bcd_3_next = bcd_3_reg - 1'b1;
                      end
                   end else begin
                      bcd_2_next = bcd_2_reg - 1'b1;
                   end
-               end else begin // if (bcd_1_reg == ZERO)
+               end else begin
                   bcd_1_next = bcd_1_reg - 1'b1;
-               end // else: !if(bcd_1_reg == ZERO)
-            end else begin // if (bcd_0_reg == ZERO)
+               end
+            end else begin
                bcd_0_next = bcd_0_reg - 1'b1;
-            end // else: !if(bcd_0_reg == ZERO)
+            end
          end // else: !if(up)
       end // if (enable && timer_tick)
    end // always @ (*)
 
-   // sequential logic
+   // --- Sequential Logic
    always @(posedge clk) begin
       if (reset) begin
          bcd_0_reg <= ZERO;
@@ -109,7 +109,7 @@ module stopwatch
       end // else: !if(reset)
    end // always @ (posedge clk)
 
-   // output logic
+   // --- Output Logic
    assign digits = {bcd_3_reg, bcd_2_reg, bcd_1_reg, bcd_0_reg};
 
 endmodule // stopwatch
