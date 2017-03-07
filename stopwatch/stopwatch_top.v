@@ -1,6 +1,5 @@
 module stopwatch_top
-  #(
-    )(
+     (
       input wire clk,
       input wire enable,
       input wire up,
@@ -53,7 +52,7 @@ module stopwatch_top
    bcd_decoder dig_3
      (
       /* input  */     .bcd_digit        (bcd_3),
-      /* input  */     .dp               (1'b1),
+      /* input  */     .dp               (1'b0),
       /* output */     .sseg_digit       (in3)
       );
 
@@ -67,7 +66,7 @@ module stopwatch_top
       /* input */     .in1               (in1),
       /* input */     .in0               (in0),
       /* output */    .an                (an),
-      /* output */    .sseg              (digit))
+      /* output */    .sseg              (digit)
      );
 
 endmodule
