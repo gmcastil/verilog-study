@@ -38,7 +38,7 @@ module stopwatch
    // --- Next State Logic
 
    // work out the 100ms tick that everything else is driven by
-   assign timer_next = (timer_reg == DVSR && enable) ? {(N-1){1'b0}} :
+   assign timer_next = (timer_reg == DVSR && enable) ? {N{1'b0}} :
                        (enable) ? timer_reg + 1'b1 :
                        timer_reg;
    assign timer_tick = (timer_reg == DVSR) ? 1'b1 : 1'b0;
@@ -48,7 +48,7 @@ module stopwatch
       bcd_1_next = bcd_1_reg;
       bcd_2_next = bcd_2_reg;
       bcd_3_next = bcd_3_reg;
-      
+
       if (enable && timer_tick) begin
          if (up) begin  // for counting upwards
             if (bcd_0_reg == NINE) begin
@@ -103,7 +103,7 @@ module stopwatch
          bcd_1_reg <= ZERO;
          bcd_2_reg <= ZERO;
          bcd_3_reg <= ZERO;
-         timer_reg <= {(N-1){1'b0}};
+         timer_reg <= {N{1'b0}};
       end else begin
          bcd_0_reg <= bcd_0_next;
          bcd_1_reg <= bcd_1_next;
