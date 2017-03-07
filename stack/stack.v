@@ -1,50 +1,97 @@
+/* verilator lint_off UNUSED */
 module stack
-  #(
-    parameter WIDTH = 8,
-    parameter ADDR_WIDTH = 4
-    )
-   (
-    input              clk,
-    input              reset,
-    input              push,
-    input              pop,
-    input [WIDTH-1:0]  data_in,
+  (
+   input            clk,
+   input            reset,
+   input            push,
+   input            pop,
+   input [7:0]      data_in,
 
-    output [WIDTH-1:0] data_out,
-    output             full
-    );
+   output reg [7:0] data_out,
+   output reg       error
+   );
 
-   localparam DEPTH = 2**ADDR_WIDTH;
+   // Note that the bottom of the stack is at the largest addres
+   localparam BOTTOM_ADDR  = 4'b1111;
+   localparam TOP_ADDR     = 4'b0000;
 
-   // signal declarations
-   reg                 push_reg;
-   reg                 pop_reg;
+   // Signal declarations
+   reg                    push_reg;
+   reg                    pop_reg;
 
-   reg [WIDTH-1:0]     register_file [DEPTH-1:0];
-   reg [WIDTH-1:0]     data_reg;                  // incoming data
-   reg                 full_reg;                  // stack is full
-   reg                 full_next;
-   reg [WIDTH-1:0]     read_data_reg;             // store popped data
-   reg                 out_enable;                // this might not be needed
+   reg [7:0]              register_file [15:0];
+   reg [7:0]              data_reg;                  // incoming data
+   reg                    error_reg;                 // stack under or overflow
+   reg                    error_next;
+   reg [7:0]              read_data_reg;             // store popped data
 
-   reg [DEPTH-1:0]     stack_ptr_reg;
-   reg [DEPTH-1:0]     stack_ptr_next;
+   reg                    push_enable;
+   reg                    pop_enable;
 
-   wire [DEPTH-1:0]    stack_bottom;
-   wire [DEPTH-1:0]    stack_top;
+   reg [3:0]              stack_ptr_reg;
+   reg [3:0]              stack_ptr_next;
 
    // --- Next State Logic
+   always @(*) begin
+      if (push_reg) begin
+         if (stack_ptr_reg == TOP_ADDR) begin
+            // Check for stack overflow condition
+            error_next = 1'b1;
+            push_enable = 1'b0;
+            pop_enable = 1'b0;
+            stack_ptr_next = stack_ptr_reg;
+         end else begin
+            error_next = 1'b0;
+            push_enable = 1'b1;
+            pop_enable = 1'b0;
+            stack_ptr_next = stack_ptr_reg - 1'b1;  // decreasing addresses
+         end
+      end else if (pop_reg) begin
+         if (stack_ptr_reg == BOTTOM_ADDR) begin
+            // Check for stack underflow condition
+            error_next = 1'b1;
+            push_enable = 1'b0;
+            pop_enable = 1'b0;
+            stack_ptr_next = stack_ptr_reg;
+         end else begin
+            error_next = 1'b0;
+            push_enable = 1'b0;
+            pop_enable = 1'b1;
+            stack_ptr_next = stack_ptr_reg + 1'b1;  // again, decreasing addresses
+         end
+      end else begin
+         error_next = error_reg;
+         push_enable = 1'b0;
+         pop_enable = 1'b0;
+         stack_ptr_next = stack_ptr_reg;
+      end
+   end
 
    // --- Output Logic
    always @(*) begin
-      full = full_reg;
+      error = error_reg;
       data_out = read_data_reg;
    end
 
    // --- Sequential Logic
    always @(posedge clk) begin
+      stack_ptr_reg <= stack_ptr_next;
       if (reset) begin
-         read_data_reg <= {(WIDTH-1){1'b0}};
-
-
+         read_data_reg <= 8'b0;
+         error_reg <= 1'b0;
+         stack_ptr_reg <= BOTTOM_ADDR;
+      end else if (push_enable) begin
+         register_file[stack_ptr_reg] <= data_reg;
+      end else if (pop_enable) begin
+         read_data_reg <= register_file[stack_ptr_reg + 1'b1];  // use previous address for pops
+      end
    end
+
+   // Register inputs to this module
+   always @(posedge clk) begin
+      push_reg <= push;
+      pop_reg <= pop;
+      data_reg <= data_in;
+   end
+
+endmodule // stack
