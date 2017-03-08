@@ -1,14 +1,14 @@
 /* verilator lint_off UNUSED */
 module stack
   (
-   input            clk,
-   input            reset,
-   input            push,
-   input            pop,
-   input [7:0]      data_in,
+   input             clk,
+   input             reset,
+   input             push,
+   input             pop,
+   input [7:0]       data_in,
 
-   output reg [7:0] data_out,
-   output reg       error
+   output wire [7:0] data_out,
+   output wire       error
    );
 
    // Note that the bottom of the stack is at the largest addres
@@ -36,42 +36,40 @@ module stack
       if (push_reg) begin
          if (stack_ptr_reg == TOP_ADDR) begin
             // Check for stack overflow condition
-            error_next = 1'b1;
-            push_enable = 1'b0;
-            pop_enable = 1'b0;
-            stack_ptr_next = stack_ptr_reg;
+            error_next <= 1'b1;
+            push_enable <= 1'b0;
+            pop_enable <= 1'b0;
+            stack_ptr_next <= stack_ptr_reg;
          end else begin
-            error_next = 1'b0;
-            push_enable = 1'b1;
-            pop_enable = 1'b0;
-            stack_ptr_next = stack_ptr_reg - 1'b1;  // decreasing addresses
+            error_next <= 1'b0;
+            push_enable <= 1'b1;
+            pop_enable <= 1'b0;
+            stack_ptr_next <= stack_ptr_reg - 4'b0001;  // decreasing addresses
          end
       end else if (pop_reg) begin
          if (stack_ptr_reg == BOTTOM_ADDR) begin
             // Check for stack underflow condition
-            error_next = 1'b1;
-            push_enable = 1'b0;
-            pop_enable = 1'b0;
-            stack_ptr_next = stack_ptr_reg;
+            error_next <= 1'b1;
+            push_enable <= 1'b0;
+            pop_enable <= 1'b0;
+            stack_ptr_next <= stack_ptr_reg;
          end else begin
-            error_next = 1'b0;
-            push_enable = 1'b0;
-            pop_enable = 1'b1;
-            stack_ptr_next = stack_ptr_reg + 1'b1;  // again, decreasing addresses
+            error_next <= 1'b0;
+            push_enable <= 1'b0;
+            pop_enable <= 1'b1;
+            stack_ptr_next <= stack_ptr_reg + 4'b0001;  // again, decreasing addresses
          end
       end else begin
-         error_next = error_reg;
-         push_enable = 1'b0;
-         pop_enable = 1'b0;
-         stack_ptr_next = stack_ptr_reg;
+         error_next <= error_reg;
+         push_enable <= 1'b0;
+         pop_enable <= 1'b0;
+         stack_ptr_next <= stack_ptr_reg;
       end
    end
 
    // --- Output Logic
-   always @(*) begin
-      error = error_reg;
-      data_out = read_data_reg;
-   end
+   assign error = error_reg;
+   assign data_out = read_data_reg;
 
    // --- Sequential Logic
    always @(posedge clk) begin
