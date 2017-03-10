@@ -4,11 +4,14 @@
     CLOSED: [2017-02-27 Mon 21:12]
 *** DONE Clause 2 - Lexical conventions
     CLOSED: [2017-02-27 Mon 21:12]
-*** DONE READ Clause 3 - Data types
+*** DONE Clause 3 - Data types
     CLOSED: [2017-03-03 Fri 18:36]
-*** READ Clause 4 - Expressions
-*** READ Clause 5 - Scheduling semantics
-*** READ Clause 6 - Assignments
+*** DONE Clause 4 - Expressions
+    CLOSED: [2017-03-06 Mon 18:26]
+*** DONE Clause 5 - Scheduling semantics
+    CLOSED: [2017-03-06 Mon 18:53]
+*** DONE Clause 6 - Assignments
+    CLOSED: [2017-03-06 Mon 19:12]
 *** READ Clause 7 - Gate and switch level modeling
 *** READ Clause 8 - User defined primitives (UDP)
 *** READ Clause 9 - Behavioral modeling
@@ -137,3 +140,153 @@ least two conventions when indexing vectors:
   net capacitance.
 
 *** Arrays
+
+*** Namespaces
+Two global namespaces:
+- Definitions
+- Text macros
+
+Five local namespaces:
+- Block
+- Module
+- Port
+- Specify block
+- Attribute
+
+This section introduces the idea of named block, function, and task constructs
+(see later section).  I've seen that sort of syntax before I believe.
+
+** Clause 4 - Expressions
+There are some oddities with the way that indexing of vector nets, reg, or time
+are given.  Consider the following example
+#+BEGIN_SRC verilog
+reg [15:0]  big_vect;
+reg [0:15]  little_vect;
+#+END_SRC
+Now consider the two expressions
+#+BEGIN_SRC verilog
+   big_vect[lsb_base_expression +: width_expr]
+little_vect[msb_base_expression +: width_expr]
+
+   big_vect[msb_base_expression -: width_expr]
+little_vect[lsb_base_expression -: width_expr]
+#+END_SRC
+The first two expressions that use the /-:/ operator are selecting a slice that
+is counting upwards (in the numerical direction).  It is obvious in the first
+expression, but the second a little less so.  It only becomes obvious when it is
+understood that in the definition of the `little_vect` the MSB is actually 0.
+Similarly in the second pair of expressions - the slicing is beginning at the
+larger number and descending.
+
+The net effect of this is that the actual bits accessed by an address is in part
+determined by how the original vector was assigned!  So be consistent with how
+you define your signals.
+
+*** Expression bit lengths
+Number of bits of an expression (size of the expression) are determined by the
+operands involved and the context:
+- Self determined expression is where the bit length of the expression is solely
+  determined by the expression iteself
+- Context-determined expression is one where the bit length of the expression is
+  determined by the bit length of the expression and the fact that it is part of
+  another expression.
+
+Table 29 shows a summary of self-determined expressions
+** Clause 5 - Schedule semantics
+*** Event simulation
+Verilog is defined in terms of a discrete event execution model.
+- Design consists of connected threads of execution or processes
+- Processes are objects that can be evaluated, that may have state and that can
+  respond to changes on their inputs to yield outputs
+- Every change in value of a net or variable in the circuit being simulated, as
+  well as the named event, is considered an update event.
+- Processes are sensitive to update events - when an update event is executed,
+  all the processes that are sensitive to that event are evaluated in arbitrary
+  order.
+- Events occur at different times (during simulation).  To make sure they are
+  processed in the right order, events are kept on an event queue.
+
+*** Event queue
+The event queue is segmented into five different regions:
+1. Events that occur at the current simulation time and can be processed in any
+   order - these are active events.
+2. Events that occur at the current simulation time, but shall be processed
+   after all the active events are processed - inactive events
+3. Events that have been evaluated during some previous simulation time, but
+   that are assigned at this stimulation time after active and inactive events
+   are processed - non-blocking assign update events
+4. Events that are processed after all active, inactive, and non-blocking assign
+   update events - monitor evnts
+5. Future inactive and non-blocking assignment update events
+
+*** Determinism
+1. Statements within a begin-end block are executed in the order in which they
+   appear in that block.
+2. Non-blocking assignments performed in the order the statements were executed.
+
+#+BEGIN_SRC verilog
+initial begin
+  a <= 0;
+  b <= 1;
+end
+#+END_SRC
+When this block is executed, two events are added to the non-blocking assign
+update queue.  Previous rule requires they be entered in source order.  Hence,
+at the end of time step 1, the variable a will be assigned 0 and then 1.
+
+*** Nondeterminism
+- Active events can be taken off the queue and processed in any order.
+- Statements without time control constructs in behavioral blocks do not have to
+  be executed as one event (time control statements are the # expression and @
+  expression).
+
+*** Scheduling implications of assignments
+- Continuous assignment statement corresponds to a process, sensitive to the
+  source elements in the expression
+- Procedural continuous assignment statement corresponds to a process, sensitive
+  to the source elements in the expression
+
+So, in the example of an assignment statement - all of the source elements in
+the assignment are the sensitivity list and if one changes, then that assignment
+process is added to the event queue.
+** Clause 6 - Assignments
+Two basic forms of assignments:
+- Continuous assignment, which assigns values to nets
+- Procedural assignment, which assigns values to variables
+
+Review here:
+- Nets are things that represent physical connections between structural
+  entitities like gates.  These are not storage elements, you cannot do
+  continuous assignments on things like regs which are variables (not nets).
+- Variables are abstractions of data storage elements - so values like regs,
+  reals, integers.
+
+Think about it this way - what does a real number mean in a physical sense?
+Wires and regs are for different things.
+
+*** Continuous assignments
+
+LHS can be one of the following:
+- Net (vector or scalar)
+- Constant bit select of a vector net
+- Constant part select of a vector net
+- Constant indexed part select of a vector net
+- Concatenation of any of these
+
+Note that by 'constant', it doesn't mean that the values assigned there cannot
+change, its that the selection range doesn't change.
+
+*** Procedural assignments
+
+LHS can be one of the following:
+- Variables (vector or scalar)
+- Bit-select of a vector reg, integer, or time variable
+- Constant part select of a vector reg
+- Memory word
+- Indexed part select of a vector reg
+- Concatenation of regs; bit or part selects of regs
+
+Procedural assignments occur within procedures such as always, initial, task,
+and functions.  They are 'triggered assignments' and reaching the assignment can
+be controlled by conditional statements.
+** Clause 7 - Gate and switch level modeling
