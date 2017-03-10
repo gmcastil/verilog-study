@@ -27,6 +27,7 @@ module stack_tb ();
       pop = 1'b0;
       push = 1'b0;
       #(2*T);
+      for (i=15; i<=0; i--) begin
       reset = 1'b0;
       data_in = 8'b10101010;
       pop = 1'b0;
@@ -45,14 +46,15 @@ module stack_tb ();
    stack
      #(
        /* parameters */
-       ) code_under_test(
-                         /* input  */    .clk         (clk),
-                         /* input  */    .reset       (reset),
-                         /* input  */    .push        (push),
-                         /* input  */    .pop         (pop),
-                         /* input  */    .data_in     (data_in),
-                         /* output */    .data_out    (data_out),
-                         /* outupt */    .error       (error)
-                         );
+       ) code_under_test
+       (
+        .clk         (clk),       /* input  */
+        .reset       (reset),     /* input  */
+        .push        (push),      /* input  */
+        .pop         (pop),       /* input  */
+        .data_in     (data_in),   /* input  */
+        .data_out    (data_out),  /* output */
+        .error       (error)      /* outupt */
+        );
 
 endmodule // stack_tb
