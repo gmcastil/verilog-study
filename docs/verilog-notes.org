@@ -12,8 +12,10 @@
     CLOSED: [2017-03-06 Mon 18:53]
 *** DONE Clause 6 - Assignments
     CLOSED: [2017-03-06 Mon 19:12]
-*** READ Clause 7 - Gate and switch level modeling
-*** READ Clause 8 - User defined primitives (UDP)
+*** DONE Clause 7 - Gate and switch level modeling
+    CLOSED: [2017-03-07 Thu 10:29]
+*** DONE Clause 8 - User defined primitives (UDP)
+    CLOSED: [2017-03-09 Thu 10:29]
 *** READ Clause 9 - Behavioral modeling
 *** READ Clause 10 - Tasks and functions
 *** READ Clause 11 - Hierarchical structures
@@ -290,3 +292,4 @@ Procedural assignments occur within procedures such as always, initial, task,
 and functions.  They are 'triggered assignments' and reaching the assignment can
 be controlled by conditional statements.
 ** Clause 7 - Gate and switch level modeling
+** Clause 9 - Behavior modeling
