@@ -35,26 +35,30 @@ module stack_tb ();
       reset = 1'b0;
       #T;
       $display("Testing push behavior...");
-      for (i=0; i<=8; i=i+1) begin
-         $display("Pushing to stack location %d", i);
-         data_in = 8'b10101010;
-         push = 1'b1;
-         #T;
-         push = 1'b0;
-         #T;
-         data_in = 8'b01010101;
+      for (i=0; i<=15; i=i+1) begin
+         data_in = i[7:0];
+         $display("Pushing value 0x%h to stack", data_in);
          push = 1'b1;
          #T;
          push = 1'b0;
          #T;
       end
+      data_in = 8'b0;
       #(2*T);
+      
+      // Now trigger an overflow
+      //push = 1'b1;
+      //pop = 1'b0;
+      //#T
+      //push = 1'b0;
+      //pop = 1'b0;
+      //#T
       // Now try to empty the stack and then generate an underflow afterwards
       $display("Testing pop behavior...");
-      for (i=0; i<=16; i=i+1) begin
+      for (i=0; i<=15; i=i+1) begin
          pop = 1'b1;
          push = 1'b0;
-         $display("Popping position %0d...value is...%h", i, data_out);
+         $display("Popping value 0x%h from the stack", data_out);
          #T;
          pop = 1'b0;
          push = 1'b0;

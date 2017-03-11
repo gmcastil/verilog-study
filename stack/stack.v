@@ -12,7 +12,8 @@ module stack
    );
 
    // Note that the bottom of the stack is at the largest addres
-   localparam BOTTOM_ADDR  = 4'b1111;
+   localparam TOP_ADDR     = 5'b10000;
+   localparam BOTTOM_ADDR  = 5'b11111;
 
    // Signal declarations
    reg                    push_reg;
@@ -27,16 +28,23 @@ module stack
    reg                    push_enable;
    reg                    pop_enable;
 
-   reg [3:0]              stack_ptr_reg;
-   reg [3:0]              stack_ptr_next;
+   reg [4:0]              stack_ptr_reg;             // stack pointer will point at whatever the next
+   reg [4:0]              stack_ptr_next;            // address is
 
    // --- Next State Logic
    always @(*) begin
       if (push_reg) begin
+         if (stack_ptr_reg == (TOP_ADDR - 5'b00001)) begin
+            error_next <= 1'b1;
+            push_enable <= 1'b0;
+            pop_enable <= 1'b0;
+            stack_ptr_next <= stack_ptr_reg;
+         end else begin
             error_next <= 1'b0;
             push_enable <= 1'b1;
             pop_enable <= 1'b0;
-            stack_ptr_next <= stack_ptr_reg - 4'b0001;  // decreasing addresses
+            stack_ptr_next <= stack_ptr_reg - 5'b00001;  // decreasing addresses
+         end
       end else if (pop_reg) begin
          if (stack_ptr_reg == BOTTOM_ADDR) begin
             // Check for stack underflow condition
@@ -48,7 +56,7 @@ module stack
             error_next <= 1'b0;
             push_enable <= 1'b0;
             pop_enable <= 1'b1;
-            stack_ptr_next <= stack_ptr_reg + 4'b0001;  // again, decreasing addresses
+            stack_ptr_next <= stack_ptr_reg + 5'b00001;  // again, decreasing addresses
          end
       end else begin
          error_next <= error_reg;
@@ -64,15 +72,21 @@ module stack
 
    // --- Sequential Logic
    always @(posedge clk) begin
-      stack_ptr_reg <= stack_ptr_next;
       if (reset) begin
          read_data_reg <= 8'b0;
          error_reg <= 1'b0;
          stack_ptr_reg <= BOTTOM_ADDR;
       end else if (push_enable) begin
-         register_file[stack_ptr_reg] <= data_reg;
+         stack_ptr_reg <= stack_ptr_next;
+         register_file[stack_ptr_reg[3:0]] <= data_reg;
+         error_reg <= error_next;
       end else if (pop_enable) begin
-         read_data_reg <= register_file[stack_ptr_reg + 1'b1];  // use previous address for pops
+         stack_ptr_reg <= stack_ptr_next;
+         error_reg <= error_next;
+         read_data_reg <= register_file[stack_ptr_reg[3:0] + 4'b0001];  // use previous address for pops
+      end else begin
+         stack_ptr_reg <= stack_ptr_reg;
+         error_reg <= error_next;
       end
    end
 
