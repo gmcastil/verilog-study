@@ -59,7 +59,7 @@ module stack
             stack_ptr_next <= stack_ptr_reg + 5'b00001;  // again, decreasing addresses
          end
       end else begin
-         error_next <= error_reg;
+         error_next <= 1'b0;
          push_enable <= 1'b0;
          pop_enable <= 1'b0;
          stack_ptr_next <= stack_ptr_reg;
