@@ -39,36 +39,74 @@ module debounce#(
 
       present_state[ZERO_ID]: begin
          if (sw) begin
-            next_state[] = WAIT1_1;
+            next_state = WAIT1_1;
          end
       end
 
       present_state[WAIT1_1_ID]: begin
          if (sw && !m_tick) begin
-            next_state[] = WAIT1_1;
-         end else if (sw && !m_tick) begin
-            next_state[]] = WAIT1_2;
+            next_state = WAIT1_1;
+         end else if (sw && m_tick) begin
+            next_state = WAIT1_2;
          end else begin
-            next_state[] = ZERO_ID;
+            next_state = ZERO_ID;
          end
       end
 
       present_state[WAIT1_2_ID]: begin
+         if (sw && !m_tick) begin
+            next_state = WAIT1_2;
+         end else if (sw && m_tick) begin
+            next_state = WAIT1_3;
+         end else begin
+            next_state = ZERO_ID;
+         end
       end
 
       present_state[WAIT1_3_ID]: begin
-      end
-
-      present_state[WAIT0_1_ID]: begin
-      end
-
-      present_state[WAIT0_2_ID]: begin
-      end
-
-      present_state[WAIT0_3_ID]: begin
+         if (sw && !m_tick) begin
+            next_state = WAIT1_3;
+         end else if (sw && m_tick) begin
+            next_state = ONE;
+         end else begin
+            next_state = ZERO_ID;
+         end
       end
 
       present_state[ONE_ID]: begin
+         if (sw) begin
+            next_state = ONE;
+         end else begin
+            next_state = WAIT;
+         end
+      end
+
+      present_state[WAIT0_1_ID]: begin
+         if (sw && !m_tick) begin
+            next_state = WAIT0_1;
+         end else if (sw && m_tick) begin
+            next_state = WAIT0_2;
+         end else begin
+            next_state = ONE_ID;
+         end
+      end
+
+      present_state[WAIT0_2_ID]: begin
+         if (sw && !m_tick) begin
+            next_state = WAIT0_2_ID;
+         end else if (sw && m_tick) begin
+            next_state = WAIT0_3_ID;
+         end else begin
+            next_state = ONE_ID;
+         end
+      end
+
+      present_state[WAIT0_3_ID]: begin
+         if (sw && !m_tick) begin
+            next_state = WAIT0_3_ID;
+         end else if (sw && !m_tick) begin
+            next_state = ZERO_ID;
+         end
       end
 
       default: begin
