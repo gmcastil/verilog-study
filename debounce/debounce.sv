@@ -38,9 +38,19 @@ module debounce#(
     case (1'b1)
 
       present_state[ZERO_ID]: begin
+         if (sw) begin
+            next_state[] = WAIT1_1;
+         end
       end
 
       present_state[WAIT1_1_ID]: begin
+         if (sw && !m_tick) begin
+            next_state[] = WAIT1_1;
+         end else if (sw && !m_tick) begin
+            next_state[]] = WAIT1_2;
+         end else begin
+            next_state[] = ZERO_ID;
+         end
       end
 
       present_state[WAIT1_2_ID]: begin
@@ -70,6 +80,9 @@ module debounce#(
 
   // --- State Machine Signals
   always @(posedge clk) begin
+
+     case (1'b1)
+
 
   end
 
