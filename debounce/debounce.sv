@@ -3,7 +3,7 @@ module debounce#(
   (
    input      clk,
    input      reset,
-              nnnnnn input sw,
+   input      sw,
    output reg db
    );
 
