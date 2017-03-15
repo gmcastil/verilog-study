@@ -87,6 +87,34 @@ module stack_tb ();
         $display("Stack underflow occurred.");
       end
       
+      // Reset the DUT
+      reset = 1'b0;
+      #(2*T);
+      reset = 1'b1;
+      pop = 1'b0;
+      push = 1'b0;
+      #(2*T);
+      reset = 1'b0;
+      #(2*T);
+
+      // Now try a single push / pop operation 
+      $display("Testing atomic push and pop operations...");
+      data_in = 8'hFF;
+      $display("Pushing value 0x%h to stack", data_in);
+      pop = 1'b0;
+      push = 1'b1;
+      #T;
+      pop = 1'b0;
+      push = 1'b0;
+      #T;
+      pop = 1'b1;
+      push = 1'b0;
+      #T;
+      pop = 1'b0;
+      push = 1'b0;
+      // #T;
+      $display("Popping value 0x%h from the stack", data_out);
+            
  end
 
    stack

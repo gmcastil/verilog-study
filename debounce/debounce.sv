@@ -7,6 +7,14 @@ module debounce#(
    output reg db
    );
 
+  // --- Signal Declarations
+  localparam DVSR = 1000000;
+  localparam N = 24;
+
+  wire [N-1:0] timer_next;
+  wire         timer_tick;
+  reg [N-1:0]  timer_reg;
+
   typedef enum logic[8:0]
                {
                 ZERO     = 8'b00000001,
@@ -32,7 +40,10 @@ module debounce#(
   localparam WAIT0_3_ID  = 6;
   localparam ONE_ID      = 7;
 
-
+  // Create the 10ms tick we need
+  assign timer_next = (timer_reg == DVSR) ? {N{1'b0}} :
+                      timer_reg + 1'b1;
+  assign timer_tick = (timer_reg == DVSR) ? 1'b1 : 1'b0;
 
   // --- Combinatorial State Movements
   always @(*) begin
@@ -48,9 +59,9 @@ module debounce#(
       end
 
       present_state[WAIT1_1_ID]: begin
-        if (sw && !m_tick) begin
+        if (sw && !timer_tick) begin
           next_state = WAIT1_1;
-        end else if (sw && m_tick) begin
+        end else if (sw && timer_tick) begin
           next_state = WAIT1_2;
         end else begin
           next_state = ZERO;
@@ -58,9 +69,9 @@ module debounce#(
       end
 
       present_state[WAIT1_2_ID]: begin
-        if (sw && !m_tick) begin
+        if (sw && !timer_tick) begin
           next_state = WAIT1_2;
-        end else if (sw && m_tick) begin
+        end else if (sw && timer_tick) begin
           next_state = WAIT1_3;
         end else begin
           next_state = ZERO;
@@ -68,9 +79,9 @@ module debounce#(
       end
 
       present_state[WAIT1_3_ID]: begin
-        if (sw && !m_tick) begin
+        if (sw && !timer_tick) begin
           next_state = WAIT1_3;
-        end else if (sw && m_tick) begin
+        end else if (sw && timer_tick) begin
           next_state = ONE;
         end else begin
           next_state = ZERO;
@@ -86,9 +97,9 @@ module debounce#(
       end
 
       present_state[WAIT0_1_ID]: begin
-        if (!sw && !m_tick) begin
+        if (!sw && !timer_tick) begin
           next_state = WAIT0_1;
-        end else if (!sw && m_tick) begin
+        end else if (!sw && timer_tick) begin
           next_state = WAIT0_2;
         end else begin
           next_state = ONE;
@@ -96,9 +107,9 @@ module debounce#(
       end
 
       present_state[WAIT0_2_ID]: begin
-        if (!sw && !m_tick) begin
+        if (!sw && !timer_tick) begin
           next_state = WAIT0_2;
-        end else if (!sw && m_tick) begin
+        end else if (!sw && timer_tick) begin
           next_state = WAIT0_3;
         end else begin
           next_state = ONE;
@@ -106,9 +117,9 @@ module debounce#(
       end
 
       present_state[WAIT0_3_ID]: begin
-        if (!sw && !m_tick) begin
+        if (!sw && !timer_tick) begin
           next_state = WAIT0_3;
-        end else if (!sw && m_tick) begin
+        end else if (!sw && timer_tick) begin
           next_state = ZERO;
         end else begin
           next_state = ONE;

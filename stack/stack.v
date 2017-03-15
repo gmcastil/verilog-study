@@ -72,6 +72,7 @@ module stack
 
    // --- Sequential Logic
    always @(posedge clk) begin
+      $display("Pop enable is 0x%h", pop_enable);
       if (reset) begin
          read_data_reg <= 8'b0;
          error_reg <= 1'b0;
