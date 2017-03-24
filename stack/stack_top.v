@@ -9,14 +9,24 @@ module stack_top (
    output wire       error_out
    );
 
+   reg [4:0] debug_stack_ptr_reg;
+   reg [4:0] debug_stack_ptr_next;
+   reg       debug_push_reg;
+   reg       debug_pop_reg;
+
    stack u_stack(
-                 .clk       (clk),        /* input  */
-                 .reset     (reset),      /* input  */
-                 .push      (push_db),    /* input  */
-                 .pop       (pop_db),     /* input  */
-                 .data_in   (data_in),    /* input  */
-                 .data_out  (data_out),   /* output */
-                 .error     (error_out)   /* output */
+                 .clk                  (clk),        /* input  */
+                 .reset                (reset),      /* input  */
+                 .push                 (push_db),    /* input  */
+                 .pop                  (pop_db),     /* input  */
+                 .data_in              (data_in),    /* input  */
+                 .data_out             (data_out),   /* output */
+                 .error                (error_out),  /* output */
+
+                 .debug_stack_ptr_reg  (debug_stack_ptr_reg),
+                 .debug_stack_ptr_next (debug_stack_ptr_next),
+                 .debug_push_reg       (debug_push_reg),
+                 .debug_pop_reg        (debug_pop_reg)
                  );
 
   db_fsm u_debounced_push(
@@ -33,5 +43,14 @@ module stack_top (
                          .db     (pop_db)       /* output */
                          );
 
+   ila_axil // #(
+     // )
+     ila_axil_i1 (
+                  .clk       (clk),
+                  .probe0    (debug_stack_ptr_reg),
+                  .probe1    (debug_stack_ptr_next),
+                  .probe2    (debug_push_reg),
+                  .probe3    (debug_pop_reg)
+                  );
 
 endmodule
