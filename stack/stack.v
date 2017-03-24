@@ -9,11 +9,23 @@ module stack
 
    output wire [7:0] data_out,
    output wire       error
+
+   // Debug signals
+   output wire [4:0] debug_stack_ptr_reg;
+   output wire [4:0] debug_stack_ptr_next;
+   output wire       debug_push_reg;
+   output wire       debug_pop_reg;
    );
 
    // Note that the bottom of the stack is at the largest addres
    localparam TOP_ADDR     = 5'b10000;
    localparam BOTTOM_ADDR  = 5'b11111;
+
+   // Debug declarations
+   assign debug_stack_ptr_reg   = stack_ptr_reg;
+   assign debug_stack_ptr_next  = stack_ptr_next;
+   assign debug_push_reg  = push_reg;
+   assign debug_pop_reg  = pop_reg;
 
    // Signal declarations
    reg                    push_reg;
