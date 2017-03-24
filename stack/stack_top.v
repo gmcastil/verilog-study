@@ -9,10 +9,10 @@ module stack_top (
    output wire       error_out
    );
 
-   reg [4:0] debug_stack_ptr_reg;
-   reg [4:0] debug_stack_ptr_next;
-   reg       debug_push_reg;
-   reg       debug_pop_reg;
+   wire [4:0] debug_stack_ptr_reg;
+   wire [4:0] debug_stack_ptr_next;
+   wire       debug_push_reg;
+   wire       debug_pop_reg;
 
    stack u_stack(
                  .clk                  (clk),        /* input  */
@@ -43,14 +43,14 @@ module stack_top (
                          .db     (pop_db)       /* output */
                          );
 
-   ila_axil // #(
+   ila_0 // #(
      // )
-     ila_axil_i1 (
+     ila_0_uc (
                   .clk       (clk),
                   .probe0    (debug_stack_ptr_reg),
                   .probe1    (debug_stack_ptr_next),
                   .probe2    (debug_push_reg),
                   .probe3    (debug_pop_reg)
-                  );
+                  ) /* synthesis syn_noprune=1 syn_preserve=1 syn_keep=1 */;
 
 endmodule
