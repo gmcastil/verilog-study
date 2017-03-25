@@ -1,4 +1,4 @@
-module dual_mealy
+module dual_moore
   (
    input wire clk,
    input wire reset,
