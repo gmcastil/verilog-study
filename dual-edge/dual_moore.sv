@@ -3,7 +3,7 @@ module dual_moore
    input wire clk,
    input wire reset,
    input wire in,
-   input wire out
+   output wire out
    );
 
    typedef enum logic [3:0]
@@ -29,26 +29,26 @@ module dual_moore
 
         present_state[IDLE_LOW_ID]: begin
            if (in == 1'b1) begin
-              next_state  = HIGH;
+              next_state  <= HIGH;
            end else begin
-              next_state  = IDLE_LOW;
+              next_state  <= IDLE_LOW;
            end
         end
 
         present_state[HIGH_ID]: begin
-           next_state  = IDLE_HIGH;
+           next_state  <= IDLE_HIGH;
         end
 
         present_state[IDLE_HIGH_ID]: begin
            if (in == 1'b0) begin
-              next_state  = LOW;
+              next_state  <= LOW;
            end else begin
-              next_state  = IDLE_HIGH;
+              next_state  <= IDLE_HIGH;
            end
         end
 
         present_state[LOW_ID]: begin
-           next_state  = IDLE_LOW;
+           next_state  <= IDLE_LOW;
         end
       endcase // case (1'b1)
    end // always @ (*)
