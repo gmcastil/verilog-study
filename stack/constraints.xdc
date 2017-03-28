@@ -5,7 +5,7 @@ set_property CONFIG_VOLTAGE 3.3 [current_design]
 # clock signal
 set_property PACKAGE_PIN W5 [get_ports clk]
     set_property IOSTANDARD LVCMOS33 [get_ports clk]
-    #create_clock -add -name sys_clk_pin -period 10.00 -waveform {0 5} [get_ports clk]
+create_clock -add -name sys_clk_pin -period 10.00 -waveform {0 5} [get_ports clk]
 
 ## Switches
 set_property PACKAGE_PIN V17 [get_ports {data_in[0]}]
@@ -48,8 +48,8 @@ set_property PACKAGE_PIN L1 [get_ports error_out]
         set_property IOSTANDARD LVCMOS33 [get_ports error_out]
 
 ##Buttons
-set_property PACKAGE_PIN U18 [get_ports reset]
-	set_property IOSTANDARD LVCMOS33 [get_ports reset]
+set_property PACKAGE_PIN U18 [get_ports reset_sw]
+	set_property IOSTANDARD LVCMOS33 [get_ports reset_sw]
 set_property PACKAGE_PIN T18 [get_ports push_sw]
 	set_property IOSTANDARD LVCMOS33 [get_ports push_sw]
 set_property PACKAGE_PIN W19 [get_ports pop_sw]
