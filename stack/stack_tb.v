@@ -47,7 +47,7 @@ module stack_tb ();
       end
       data_in = 8'b0;
       #(2*T);
-      
+
       // Now try to trigger an overflow
       push = 1'b1;
       pop = 1'b0;
@@ -86,7 +86,7 @@ module stack_tb ();
       end else begin
         $display("Stack underflow occurred.");
       end
-      
+
       // Reset the DUT
       reset = 1'b0;
       #(2*T);
@@ -97,7 +97,7 @@ module stack_tb ();
       reset = 1'b0;
       #(2*T);
 
-      // Now try a single push / pop operation 
+      // Now try a single push / pop operation
       $display("Testing atomic push and pop operations...");
       data_in = 8'hFF;
       $display("Pushing value 0x%h to stack", data_in);
@@ -114,7 +114,25 @@ module stack_tb ();
       push = 1'b0;
       // #T;
       $display("Popping value 0x%h from the stack", data_out);
-            
+
+      // Now we'll expose the bug
+      $display("Testing a push that is more than one clock cycle");
+      reset    = 1'b0;
+      #(2*T);
+      reset    = 1'b1;
+      pop      = 1'b0;
+      push     = 1'b0;
+      #(2*T);
+      data_in  = 8'hFF;
+      push     = 1'b1;
+      #(3000*T);
+      push  = 1'b0;
+      pop   = 1'b0;
+      #(2*T);
+      push  = 1'b0;
+      pop   = 1'b1;
+      #(3000*T);
+
  end
 
    stack
