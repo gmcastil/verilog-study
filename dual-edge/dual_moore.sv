@@ -3,7 +3,7 @@ module dual_moore
    input wire clk,
    input wire reset,
    input wire in,
-   output wire out
+   output reg out
    );
 
    typedef enum logic [3:0]
@@ -82,3 +82,5 @@ module dual_moore
         default begin end
       endcase // case (1'b1)
    end // always @ (posedge clk)
+
+endmodule
