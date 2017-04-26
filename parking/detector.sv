@@ -37,7 +37,11 @@ module detector
    localparam X_00_ID = 9;
 
    always @(posedge clk) begin
-      present <= next;
+      if (reset) begin
+         present <= IDLE;
+      end else begin
+         present <= next;
+      end
    end
 
    always @(*) begin
