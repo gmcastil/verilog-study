@@ -36,44 +36,113 @@ module detector
    localparam X_01_ID = 8;
    localparam X_00_ID = 9;
 
+   always @(posedge clk) begin
+      present <= next;
+   end
+
    always @(*) begin
 
-      next <= present;
+      case (present)
+
+        E_00: begin
+           inc = 1'b1;
+           dec = 1'b0;
+        end
+
+        X_00: begin
+           inc = 1'b0;
+           dec = 1'b1;
+        end
+
+        default: begin
+           inc = 1'b0;
+           dec = 1'b0;
+        end
+      endcase
+   end
+
+   always @(*) begin
+
+      next = present;
 
       case (1'b1)
 
         present[IDLE_ID]: begin
            if (a == 1'b1) begin
-              next <= E_01;
+              next = E_01;
            end else if (b == 1'b1) begin
-              next <= X_10;
+              next = X_10;
            end else begin
-              next <= IDLE;
+              next = present;
            end
         end
 
         present[E_01_ID]: begin
+           if (a == 1'b1 && b == 1'b1) begin
+              next = E_11;
+           end else if (a == 1'b0 && b == 1'b0) begin
+              next = IDLE;
+           end else begin
+              next = present;
+           end
         end
 
         present[E_11_ID]: begin
+           if (a == 1'b0 && b == 1'b1) begin
+              next = E_10;
+           end else if (a == 1'b1 && b == 1'b0) begin
+              next = E_01;
+           end else begin
+              next = present;
+           end
         end
 
         present[E_10_ID]: begin
+           if (a == 1'b0 && b == 1'b0) begin
+              next = E_00;
+           end else if (a == 1'b1 && b == 1'b1) begin
+              next = E_11;
+           end else begin
+              next = present;
+           end
         end
 
         present[E_00_ID]: begin
+           next = IDLE
         end
 
         present[X_10_ID]: begin
+           if (a == 1'b1 && b == 1'b1) begin
+              next = X_11;
+           end else if (a == 1'b0 && b == 1'b0) begin
+              next = IDLE;
+           end else begin
+              next = present;
+           end
         end
 
         present[X_11_ID]: begin
+           if (a == 1'b1 && b == 1'b0) begin
+              next = X_01;
+           end else if (a == 1'b0 && b == 1'b1) begin
+              next = X_10;
+           end else begin
+              next = present;
+           end
         end
 
         present[X_01_ID]: begin
+           if (a == 1'b0 && b == 1'b0) begin
+              next = X_00;
+           end else if (a == 1'b1 && b == 1'b1) begin
+              next = X_11;
+           end else begin
+              next = present;
+           end
         end
 
         present[X_00_ID]: begin
+           next = IDLE
         end
 
         default: begin
