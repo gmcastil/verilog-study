@@ -3,10 +3,11 @@ module detector
     )
   (
    input  clk,
+   input  reset,
    input  a,
    input  b,
-   output inc,
-   output dec
+   output reg inc,
+   output reg dec
    );
 
   localparam IDLE = 0;
@@ -24,7 +25,12 @@ module detector
 
   // -- State register
   always @(posedge clk) begin
-    state <= next;
+    if (reset == 1'b1) begin
+      state = 9'b0;
+      state[IDLE] = 1'b1;
+    end else begin
+      state <= next;
+    end
   end
 
   // -- Combinatorial state machine movements
@@ -118,7 +124,7 @@ module detector
   // -- Signal assigments
   always @(posedge clk) begin
 
-    case (state)
+    case (1'b1)
 
       next[IDLE]: begin
         inc = 1'b0;

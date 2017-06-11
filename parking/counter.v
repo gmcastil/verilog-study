@@ -1,4 +1,4 @@
-module BCD_counter
+module counter
   (
    input        clk,
    input        reset,

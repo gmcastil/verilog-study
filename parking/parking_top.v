@@ -25,6 +25,9 @@ module parking_top
   wire [7:0] in2;
   wire [7:0] in3;
 
+  wire [7:0] count;
+  reg  sync_reset;
+
   // Debounce switch #1
   debounce db_sw_1
     (
@@ -43,17 +46,11 @@ module parking_top
      .db    (db2)
      );
 
-  debounce db_reset
-    (
-     .clk   (clk),
-     .reset (async_reset),
-     .sw    (async_reset),
-     .db    (db_reset)
-
   // Synchronize the assertion and deassertion of the global reset
-  porf porf_gen
+  porf_gen #(
+    .N (5)) porf
     (
-     .async_reset  (db_reset),
+     .async_reset  (async_reset),
      .clk          (clk),
      .clk_enable   (1'b1),
      .sync_reset   (sync_reset)
@@ -62,11 +59,12 @@ module parking_top
   // Parking lot detector
   detector u_detector
     (
+     .clk    (clk),
+     .reset  (sync_reset),
      .a      (db1),
      .b      (db2),
-     .clk    (clk),
      .inc    (inc),
-     .dec    (dec),
+     .dec    (dec)
      );
 
   // BCD counter
@@ -82,7 +80,7 @@ module parking_top
   // BCD to SSEG display
   bcd_decoder dig_1
     (
-     .bcd_digit (count[3:0])
+     .bcd_digit (count[3:0]),
      .dp (1'b1),
      .sseg_digit (in0)
      );
@@ -97,7 +95,7 @@ module parking_top
   disp_mux disp_unit
     (
      .clk               (clk),
-     .reset             (reset),
+     .reset             (sync_reset),
      .in3               (8'hFF),
      .in2               (8'hFF),
      .in1               (in1),

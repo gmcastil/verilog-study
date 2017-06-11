@@ -16,7 +16,8 @@
     CLOSED: [2017-03-07 Thu 10:29]
 *** DONE Clause 8 - User defined primitives (UDP)
     CLOSED: [2017-03-09 Thu 10:29]
-*** READ Clause 9 - Behavioral modeling
+*** DONE Clause 9 - Behavioral modeling
+    CLOSED: [2017-03-31 Fri 21:05]
 *** READ Clause 10 - Tasks and functions
 *** READ Clause 11 - Hierarchical structures
 *** READ Clause 13 - Configuring the contents of a design
@@ -293,3 +294,10 @@ and functions.  They are 'triggered assignments' and reaching the assignment can
 be controlled by conditional statements.
 ** Clause 7 - Gate and switch level modeling
 ** Clause 9 - Behavior modeling
+*** Behavioral model overview
+Two types of activity constructs are the always and initial constructs.
+- All always blocks are evaluated concurrently during the simulation run
+- An initial block only gets evaluated once at the beginning of simulation
+
+Procedural assignments update the value of variables under the control of the
+procedural flow constructs that surround them.
