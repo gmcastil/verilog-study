@@ -10,6 +10,7 @@ module parking_top
 
   wire    db1;
   wire    db2;
+  wire    db_reset;
 
   reg     inc;
   reg     dec;
@@ -28,7 +29,7 @@ module parking_top
   debounce db_sw_1
     (
      .clk   (clk),
-     .reset (reset),
+     .reset (sync_reset),
      .sw    (sw1),
      .db    (db1)
      );
@@ -37,15 +38,22 @@ module parking_top
   debounce db_sw_2
     (
      .clk   (clk),
-     .reset (reset),
+     .reset (sync_reset),
      .sw    (sw2),
      .db    (db2)
      );
 
+  debounce db_reset
+    (
+     .clk   (clk),
+     .reset (async_reset),
+     .sw    (async_reset),
+     .db    (db_reset)
+
   // Synchronize the assertion and deassertion of the global reset
   porf porf_gen
     (
-     .async_reset  (async_reset),
+     .async_reset  (db_reset),
      .clk          (clk),
      .clk_enable   (1'b1),
      .sync_reset   (sync_reset)
