@@ -8,14 +8,6 @@ module BCD_counter
    );
 
   localparam ZERO  = 4'b0000;
-  localparam ONE   = 4'b0001;
-  localparam TWO   = 4'b0010;
-  localparam THREE = 4'b0011;
-  localparam FOUR  = 4'b0100;
-  localparam FIVE  = 4'b0101;
-  localparam SIX   = 4'b0110;
-  localparam SEVEN = 4'b0111;
-  localparam EIGHT = 4'b1000;
   localparam NINE  = 4'b1001;
 
   reg [3:0]     dig_1;
@@ -29,9 +21,30 @@ module BCD_counter
       dig_1 <= ZERO;
       dig_2 <= ZERO;
     end else begin
-
+      if (inc == 1'b1) begin
+        if (dig_1 == NINE) begin
+          dig_1 = ZERO;
+          if (dig_2 == NINE) begin
+            dig_2 = ZERO;
+          end else begin
+            dig_2 = dig_2 + 1'b1;
+          end
+        end else begin
+          dig_1 = dig_1 + 1'b1;
+        end
+      end else if (dec == 1'b1) begin
+        if (dig_1 == ZERO) begin
+          dig_1 = NINE;
+          if (dig_2 == ZERO) begin
+            dig_2 = NINE;
+          end else begin
+            dig_2 = dig_2 - 1'b1;
+          end
+        end else begin
+          dig_1 = dig_1 - 1'b1;
+        end
+      end
     end
   end
-
 
 endmodule // BCD_counter
