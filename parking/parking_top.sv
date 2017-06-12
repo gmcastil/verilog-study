@@ -4,7 +4,7 @@ module parking_top
    input  sw2,
    input  clk,
    input  async_reset,
-   output count
+   output display
    );
 
   wire    db1;
@@ -51,5 +51,22 @@ module parking_top
      );
 
   // BCD counter
+  counter u_counter
+    (
+     .clk   (clk),
+     .reset (sync_reset),
+     .inc   (inc),
+     .dec   (dec),
+     .count (count)
+     );
 
   // BCD to SSEG display
+  bcd_decoder dig_1
+    (
+     );
+
+  bcd_decoder dig_2
+    (
+     );
+
+endmodule // parking_top
