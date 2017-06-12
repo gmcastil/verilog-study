@@ -4,7 +4,8 @@ module parking_top
    input  sw2,
    input  clk,
    input  async_reset,
-   output display
+   output [3:0] an,
+   output [7:0] digit
    );
 
   wire    db1;
@@ -12,6 +13,16 @@ module parking_top
 
   reg     inc;
   reg     dec;
+
+  wire [3:0] bcd_0;
+  wire [3:0] bcd_1;
+  wire [3:0] bcd_2;
+  wire [3:0] bcd_3;
+
+  wire [7:0] in0;
+  wire [7:0] in1;
+  wire [7:0] in2;
+  wire [7:0] in3;
 
   // Debounce switch #1
   debounce db_sw_1
@@ -63,10 +74,28 @@ module parking_top
   // BCD to SSEG display
   bcd_decoder dig_1
     (
+     .bcd_digit (count[3:0])
+     .dp (1'b1),
+     .sseg_digit (in0)
      );
 
   bcd_decoder dig_2
     (
+     .bcd_digit (count[7:4]),
+     .dp (1'b1),
+     .sseg_digit (in1)
+     );
+
+  disp_mux disp_unit
+    (
+     .clk               (clk),
+     .reset             (reset),
+     .in3               (8'hFF),
+     .in2               (8'hFF),
+     .in1               (in1),
+     .in0               (in0),
+     .an                (an),
+     .sseg              (digit)
      );
 
 endmodule // parking_top
